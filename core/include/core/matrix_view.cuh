@@ -1,6 +1,6 @@
 #pragma once
 
-#include <work1/kinds.cuh>
+#include "kinds.cuh"
 
 namespace hsys {
 

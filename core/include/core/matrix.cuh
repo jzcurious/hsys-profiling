@@ -1,14 +1,14 @@
 #pragma once
 
+#include "data.cuh"
 #include "kinds.cuh"
 #include "matrix_view.cuh"
 
 #include <memory>
-#include <work1/data.cuh>
 
 namespace hsys {
 
-template <AtomK AtomT, MatrixOpsPolicyK OpsPolicyT>
+template <AtomK AtomT>
 struct Matrix {
   struct hsys_matrix_feature {};
 
@@ -17,8 +17,6 @@ struct Matrix {
   MatrixView<AtomT> view_;
 
  public:
-  using ops_policy_t = OpsPolicyT;
-
   Matrix(std::size_t nrows, std::size_t ncols)
       : data_(std::make_shared<Data<AtomT>>(nrows * ncols))
       , view_(data_->data(), nrows, ncols) {}
