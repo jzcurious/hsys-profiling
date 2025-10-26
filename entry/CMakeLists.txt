@@ -5,20 +5,22 @@ set(CMAKE_CUDA_USE_RESPONSE_FILE_FOR_INCLUDES OFF)
 set(CMAKE_CUDA_USE_RESPONSE_FILE_FOR_LIBRARIES OFF)
 set(CMAKE_CUDA_USE_RESPONSE_FILE_FOR_OBJECTS OFF)
 
-file(GLOB_RECURSE SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cu
-)
+include(../cmake/setup_cuda_targets.cmake)
 
-add_executable(entry ${SRC})
+find_package(CUDAToolkit REQUIRED)
 
-target_compile_features(entry PRIVATE
-    cuda_std_20
-)
+add_executable(dot ${CMAKE_CURRENT_SOURCE_DIR}/src/dot.cu)
 
-target_compile_options(entry PRIVATE
-    -Wall -O3
-)
-
-target_link_libraries(entry PRIVATE
-    kernels
+setup_cuda_targets(
+    TARGETS
+        dot
+    FEATURES
+        cuda_std_20
+    OPTIONS
+        -Wall -O3
+    CUDA_MIN_ARCH
+        75
+    LIBS
+        kernels
+        CUDA::curand
 )

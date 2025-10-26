@@ -39,6 +39,14 @@ struct Vector {
   const VectorView<AtomT>& view() const {
     return view_;
   }
+
+  operator VectorView<AtomT>() {
+    return view_;
+  }
+
+  operator const VectorView<AtomT>() const {
+    return view_;
+  }
 };
 
 }  // namespace hsys
