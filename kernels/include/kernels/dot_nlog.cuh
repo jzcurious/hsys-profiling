@@ -1,12 +1,11 @@
 #pragma once
 
 #include "utils.cuh"
+#include "warp_size.cuh"
 
 #include <core/vector_view.cuh>
 
 namespace hsys {
-
-constexpr unsigned warp_size = 32;
 
 __device__ float warp_reduce(float val) {
 #pragma unroll
