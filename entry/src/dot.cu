@@ -57,7 +57,7 @@ struct DotPipeline {
   Vector c_;
 
  public:
-  DotPipeline(std::size_t len = 1024000)
+  DotPipeline(std::size_t len = 102400000)
       : a_(len)
       , b_(len)
       , c_(1) {
