@@ -47,7 +47,7 @@ void dot_nlog(Vector& c, const Vector& a, const Vector& b) {
 template <unsigned block = 32>
 void dot_nlog_vect(Vector& c, const Vector& a, const Vector& b) {
   const unsigned grid = std::ceil(a.size() / (block * 4));
-  hsys::dot_nlog<block><<<grid, block>>>(c.view(), a.view(), b.view());
+  hsys::dot_nlog_vect<block><<<grid, block>>>(c.view(), a.view(), b.view());
 }
 
 struct DotPipeline {
