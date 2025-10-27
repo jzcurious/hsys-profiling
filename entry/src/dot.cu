@@ -2,6 +2,7 @@
 #include <iostream>
 #include <kernels/dot_atomic.cuh>
 #include <kernels/dot_coarsened.cuh>
+#include <kernels/dot_vectorized.cuh>
 
 #include "../include/fill_rand.cuh"
 
@@ -18,6 +19,13 @@ void dot_coarsened(Vector& c, const Vector& a, const Vector& b) {
   constexpr unsigned block = 32;
   const unsigned grid = std::ceil(a.size() / (block * portion));
   hsys::dot_coarsened<portion><<<grid, block>>>(c.view(), a.view(), b.view());
+}
+
+template <unsigned portion = 32>
+void dot_vectorized(Vector& c, const Vector& a, const Vector& b) {
+  constexpr unsigned block = 32;
+  const unsigned grid = std::ceil(a.size() / (block * portion));
+  hsys::dot_vectorized<portion><<<grid, block>>>(c.view(), a.view(), b.view());
 }
 
 struct DotPipeline {
@@ -46,7 +54,9 @@ struct DotPipeline {
 
 int main() {
   DotPipeline dot;
+
   dot.run(dot_atomic);
+
   dot.run(dot_coarsened<2>);
   dot.run(dot_coarsened<4>);
   dot.run(dot_coarsened<8>);
@@ -57,4 +67,13 @@ int main() {
   dot.run(dot_coarsened<256>);
   dot.run(dot_coarsened<512>);
   dot.run(dot_coarsened<1024>);
+
+  dot.run(dot_vectorized<4>);
+  dot.run(dot_vectorized<8>);
+  dot.run(dot_vectorized<16>);
+  dot.run(dot_vectorized<32>);
+  dot.run(dot_vectorized<64>);
+  dot.run(dot_vectorized<128>);
+  dot.run(dot_vectorized<256>);
+  dot.run(dot_vectorized<512>);
 }

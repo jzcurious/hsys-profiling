@@ -8,7 +8,7 @@ namespace hsys {
 
 template <unsigned portion>
 __global__ void dot_coarsened(
-    VectorViewK auto c, VectorViewK auto a, VectorViewK auto b) {
+    VectorViewK auto c, const VectorViewK auto a, const VectorViewK auto b) {
   auto begin_idx = internal::thread_id_1d() * portion;
   typename decltype(c)::atom_t part{0};
 
