@@ -11,6 +11,8 @@ template <AtomK AtomT>
 struct Vector {
   struct hsys_vector_feature {};
 
+  using view_t = VectorView<AtomT>;
+
  private:
   std::shared_ptr<Data<AtomT>> data_;
   VectorView<AtomT> view_;
