@@ -7,40 +7,54 @@
 
 using Vector = hsys::Vector<float>;
 
-void run_dot_atomic(Vector& c, const Vector& a, const Vector& b) {
+void dot_atomic(Vector& c, const Vector& a, const Vector& b) {
   constexpr unsigned block = 128;
   const unsigned grid = std::ceil(a.size() / block);
   hsys::dot_atomic<<<grid, block>>>(c.view(), a.view(), b.view());
 }
 
 template <unsigned portion = 32>
-void run_dot_coarsened(Vector& c, const Vector& a, const Vector& b) {
-  const unsigned block = std::ceil(128 / portion);
-  const unsigned grid = std::ceil(a.size() / block);
+void dot_coarsened(Vector& c, const Vector& a, const Vector& b) {
+  constexpr unsigned block = 32;
+  const unsigned grid = std::ceil(a.size() / (block * portion));
   hsys::dot_coarsened<portion><<<grid, block>>>(c.view(), a.view(), b.view());
 }
 
-template <class ImplT>
-void dot_n(ImplT impl, std::size_t n = 102400) {
-  auto a = Vector(n);
-  auto b = Vector(n);
-  auto c = Vector(1);
+struct DotPipeline {
+ private:
+  Vector a_;
+  Vector b_;
+  Vector c_;
 
-  fill_rand(a);
-  fill_rand(b);
+ public:
+  DotPipeline(std::size_t len = 102400)
+      : a_(len)
+      , b_(len)
+      , c_(1) {
+    fill_rand(a_);
+    fill_rand(b_);
+  }
 
-  impl(c, a, b);
-
-  float result = 0;
-  c.data().copy_to_host(&result);
-  std::cout << result << std::endl;
-}
+  template <class ImplT>
+  void run(ImplT impl) {
+    float result = 0;
+    impl(c_, a_, b_);
+    c_.data().copy_to_host(&result);
+    std::cout << result << std::endl;
+  }
+};
 
 int main() {
-  dot_n(run_dot_atomic);
-  dot_n(run_dot_coarsened<8>);
-  dot_n(run_dot_coarsened<16>);
-  dot_n(run_dot_coarsened<32>);
-  dot_n(run_dot_coarsened<64>);
-  dot_n(run_dot_coarsened<128>);
+  DotPipeline dot;
+  dot.run(dot_atomic);
+  dot.run(dot_coarsened<2>);
+  dot.run(dot_coarsened<4>);
+  dot.run(dot_coarsened<8>);
+  dot.run(dot_coarsened<16>);
+  dot.run(dot_coarsened<32>);
+  dot.run(dot_coarsened<64>);
+  dot.run(dot_coarsened<128>);
+  dot.run(dot_coarsened<256>);
+  dot.run(dot_coarsened<512>);
+  dot.run(dot_coarsened<1024>);
 }
