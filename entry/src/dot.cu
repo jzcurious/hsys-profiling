@@ -2,6 +2,7 @@
 #include <iostream>
 #include <kernels/dot_atomic.cuh>
 #include <kernels/dot_coarsened.cuh>
+#include <kernels/dot_nlog.cuh>
 #include <kernels/dot_shmem.cuh>
 #include <kernels/dot_vectorized.cuh>
 
@@ -34,6 +35,12 @@ void dot_shmem(Vector& c, const Vector& a, const Vector& b) {
   constexpr unsigned block = 32;
   const unsigned grid = std::ceil(a.size() / (block * portion));
   hsys::dot_shmem<portion><<<grid, block>>>(c.view(), a.view(), b.view());
+}
+
+template <unsigned block = 32>
+void dot_nlog(Vector& c, const Vector& a, const Vector& b) {
+  const unsigned grid = std::ceil(a.size() / block);
+  hsys::dot_nlog<block><<<grid, block>>>(c.view(), a.view(), b.view());
 }
 
 struct DotPipeline {
@@ -93,4 +100,10 @@ int main() {
   dot.run(dot_shmem<128>);
   dot.run(dot_shmem<256>);
   dot.run(dot_shmem<512>);
+
+  dot.run(dot_nlog<32>);
+  dot.run(dot_nlog<64>);
+  dot.run(dot_nlog<128>);
+  dot.run(dot_nlog<256>);
+  dot.run(dot_nlog<512>);
 }
