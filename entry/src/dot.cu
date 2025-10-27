@@ -4,6 +4,7 @@
 #include <kernels/dot_coarsened.cuh>
 #include <kernels/dot_nlog.cuh>
 #include <kernels/dot_nlog_vect.cuh>
+#include <kernels/dot_nlog_vect_fma.cuh>
 #include <kernels/dot_shmem.cuh>
 #include <kernels/dot_vectorized.cuh>
 
@@ -50,6 +51,12 @@ void dot_nlog_vect(Vector& c, const Vector& a, const Vector& b) {
   hsys::dot_nlog_vect<block><<<grid, block>>>(c.view(), a.view(), b.view());
 }
 
+template <unsigned block = 32>
+void dot_nlog_vect_fma(Vector& c, const Vector& a, const Vector& b) {
+  const unsigned grid = std::ceil(a.size() / (block * 4));
+  hsys::dot_nlog_vect_fma<block><<<grid, block>>>(c.view(), a.view(), b.view());
+}
+
 struct DotPipeline {
  private:
   Vector a_;
@@ -77,46 +84,52 @@ struct DotPipeline {
 int main() {
   DotPipeline dot;
 
-  dot.run(dot_atomic);
+  // dot.run(dot_atomic);
 
-  dot.run(dot_coarsened<2>);
-  dot.run(dot_coarsened<4>);
-  dot.run(dot_coarsened<8>);
-  dot.run(dot_coarsened<16>);
-  dot.run(dot_coarsened<32>);
-  dot.run(dot_coarsened<64>);
-  dot.run(dot_coarsened<128>);
-  dot.run(dot_coarsened<256>);
-  dot.run(dot_coarsened<512>);
-  dot.run(dot_coarsened<1024>);
+  // dot.run(dot_coarsened<2>);
+  // dot.run(dot_coarsened<4>);
+  // dot.run(dot_coarsened<8>);
+  // dot.run(dot_coarsened<16>);
+  // dot.run(dot_coarsened<32>);
+  // dot.run(dot_coarsened<64>);
+  // dot.run(dot_coarsened<128>);
+  // dot.run(dot_coarsened<256>);
+  // dot.run(dot_coarsened<512>);
+  // dot.run(dot_coarsened<1024>);
 
-  dot.run(dot_vectorized<4>);
-  dot.run(dot_vectorized<8>);
-  dot.run(dot_vectorized<16>);
-  dot.run(dot_vectorized<32>);
-  dot.run(dot_vectorized<64>);
-  dot.run(dot_vectorized<128>);
-  dot.run(dot_vectorized<256>);
-  dot.run(dot_vectorized<512>);
+  // dot.run(dot_vectorized<4>);
+  // dot.run(dot_vectorized<8>);
+  // dot.run(dot_vectorized<16>);
+  // dot.run(dot_vectorized<32>);
+  // dot.run(dot_vectorized<64>);
+  // dot.run(dot_vectorized<128>);
+  // dot.run(dot_vectorized<256>);
+  // dot.run(dot_vectorized<512>);
 
-  dot.run(dot_shmem<4>);
-  dot.run(dot_shmem<8>);
-  dot.run(dot_shmem<16>);
-  dot.run(dot_shmem<32>);
-  dot.run(dot_shmem<64>);
-  dot.run(dot_shmem<128>);
-  dot.run(dot_shmem<256>);
-  dot.run(dot_shmem<512>);
+  // dot.run(dot_shmem<4>);
+  // dot.run(dot_shmem<8>);
+  // dot.run(dot_shmem<16>);
+  // dot.run(dot_shmem<32>);
+  // dot.run(dot_shmem<64>);
+  // dot.run(dot_shmem<128>);
+  // dot.run(dot_shmem<256>);
+  // dot.run(dot_shmem<512>);
 
-  dot.run(dot_nlog<32>);
-  dot.run(dot_nlog<64>);
-  dot.run(dot_nlog<128>);
-  dot.run(dot_nlog<256>);
-  dot.run(dot_nlog<512>);
+  // dot.run(dot_nlog<32>);
+  // dot.run(dot_nlog<64>);
+  // dot.run(dot_nlog<128>);
+  // dot.run(dot_nlog<256>);
+  // dot.run(dot_nlog<512>);
 
   dot.run(dot_nlog_vect<32>);
   dot.run(dot_nlog_vect<64>);
   dot.run(dot_nlog_vect<128>);
   dot.run(dot_nlog_vect<256>);
   dot.run(dot_nlog_vect<512>);
+
+  dot.run(dot_nlog_vect_fma<32>);
+  dot.run(dot_nlog_vect_fma<64>);
+  dot.run(dot_nlog_vect_fma<128>);
+  dot.run(dot_nlog_vect_fma<256>);
+  dot.run(dot_nlog_vect_fma<512>);
 }
