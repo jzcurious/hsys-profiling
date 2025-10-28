@@ -5,5 +5,5 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CUDA_ARCHITECTURES 75)
 
 add_subdirectory(core)
-add_subdirectory(kernels)
+add_subdirectory(dot)
 add_subdirectory(entry)

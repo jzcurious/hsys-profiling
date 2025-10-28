@@ -2,9 +2,10 @@
 
 #include "utils.cuh"
 
+#include <core/vector.cuh>
 #include <core/vector_view.cuh>
 
-namespace hsys {
+namespace hsys::kernels {
 
 template <unsigned portion>
   requires(portion % 4 == 0)
@@ -36,6 +37,17 @@ __global__ void dot_shmem(
   __syncthreads();
 
   if (threadIdx.x == 0) atomicAdd(&c[0], part_blockwide[0]);
+}
+
+}  // namespace hsys::kernels
+
+namespace hsys {
+
+template <unsigned portion, VectorK VectorT = hsys::Vector<float>>
+void dot_shmem(VectorT& c, const VectorT& a, const VectorT& b) {
+  constexpr unsigned block = 32;
+  const unsigned grid = std::ceil(a.size() / (block * portion));
+  hsys::kernels::dot_shmem<portion><<<grid, block>>>(c.view(), a.view(), b.view());
 }
 
 }  // namespace hsys

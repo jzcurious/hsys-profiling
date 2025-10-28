@@ -1,54 +1,14 @@
 #include <core/vector.cuh>
+#include <dot/dot_atomic.cuh>
+#include <dot/dot_coars.cuh>
+#include <dot/dot_nlog.cuh>
+#include <dot/dot_shmem.cuh>
+#include <dot/dot_vect.cuh>
 #include <iostream>
-#include <kernels/dot_atomic.cuh>
-#include <kernels/dot_coarsened.cuh>
-#include <kernels/dot_nlog.cuh>
-#include <kernels/dot_nlog_vect.cuh>
-#include <kernels/dot_shmem.cuh>
-#include <kernels/dot_vectorized.cuh>
 
 #include "../include/fill_rand.cuh"
 
 using Vector = hsys::Vector<float>;
-
-void dot_atomic(Vector& c, const Vector& a, const Vector& b) {
-  constexpr unsigned block = 128;
-  const unsigned grid = std::ceil(a.size() / block);
-  hsys::dot_atomic<<<grid, block>>>(c.view(), a.view(), b.view());
-}
-
-template <unsigned portion = 32>
-void dot_coarsened(Vector& c, const Vector& a, const Vector& b) {
-  constexpr unsigned block = 32;
-  const unsigned grid = std::ceil(a.size() / (block * portion));
-  hsys::dot_coarsened<portion><<<grid, block>>>(c.view(), a.view(), b.view());
-}
-
-template <unsigned portion = 32>
-void dot_vectorized(Vector& c, const Vector& a, const Vector& b) {
-  constexpr unsigned block = 32;
-  const unsigned grid = std::ceil(a.size() / (block * portion));
-  hsys::dot_vectorized<portion><<<grid, block>>>(c.view(), a.view(), b.view());
-}
-
-template <unsigned portion = 32>
-void dot_shmem(Vector& c, const Vector& a, const Vector& b) {
-  constexpr unsigned block = 32;
-  const unsigned grid = std::ceil(a.size() / (block * portion));
-  hsys::dot_shmem<portion><<<grid, block>>>(c.view(), a.view(), b.view());
-}
-
-template <unsigned block = 32>
-void dot_nlog(Vector& c, const Vector& a, const Vector& b) {
-  const unsigned grid = std::ceil(a.size() / block);
-  hsys::dot_nlog<block><<<grid, block>>>(c.view(), a.view(), b.view());
-}
-
-template <unsigned block = 32>
-void dot_nlog_vect(Vector& c, const Vector& a, const Vector& b) {
-  const unsigned grid = std::ceil(a.size() / (block * 4));
-  hsys::dot_nlog_vect<block><<<grid, block>>>(c.view(), a.view(), b.view());
-}
 
 struct DotPipeline {
  private:
@@ -57,7 +17,7 @@ struct DotPipeline {
   Vector c_;
 
  public:
-  DotPipeline(std::size_t len = 102400000)
+  DotPipeline(std::size_t len)
       : a_(len)
       , b_(len)
       , c_(1) {
@@ -75,48 +35,42 @@ struct DotPipeline {
 };
 
 int main() {
-  DotPipeline dot;
+  DotPipeline dot{102400000};
 
-  // dot.run(dot_atomic);
+  dot.run(hsys::dot_atomic<>);
 
-  // dot.run(dot_coarsened<2>);
-  // dot.run(dot_coarsened<4>);
-  // dot.run(dot_coarsened<8>);
-  // dot.run(dot_coarsened<16>);
-  // dot.run(dot_coarsened<32>);
-  // dot.run(dot_coarsened<64>);
-  // dot.run(dot_coarsened<128>);
-  // dot.run(dot_coarsened<256>);
-  // dot.run(dot_coarsened<512>);
-  // dot.run(dot_coarsened<1024>);
+  dot.run(hsys::dot_coars<2>);
+  dot.run(hsys::dot_coars<4>);
+  dot.run(hsys::dot_coars<8>);
+  dot.run(hsys::dot_coars<16>);
+  dot.run(hsys::dot_coars<32>);
+  dot.run(hsys::dot_coars<64>);
+  dot.run(hsys::dot_coars<128>);
+  dot.run(hsys::dot_coars<256>);
+  dot.run(hsys::dot_coars<512>);
+  dot.run(hsys::dot_coars<1024>);
 
-  // dot.run(dot_vectorized<4>);
-  // dot.run(dot_vectorized<8>);
-  // dot.run(dot_vectorized<16>);
-  // dot.run(dot_vectorized<32>);
-  // dot.run(dot_vectorized<64>);
-  // dot.run(dot_vectorized<128>);
-  // dot.run(dot_vectorized<256>);
-  // dot.run(dot_vectorized<512>);
+  dot.run(hsys::dot_vect<4>);
+  dot.run(hsys::dot_vect<8>);
+  dot.run(hsys::dot_vect<16>);
+  dot.run(hsys::dot_vect<32>);
+  dot.run(hsys::dot_vect<64>);
+  dot.run(hsys::dot_vect<128>);
+  dot.run(hsys::dot_vect<256>);
+  dot.run(hsys::dot_vect<512>);
 
-  // dot.run(dot_shmem<4>);
-  // dot.run(dot_shmem<8>);
-  // dot.run(dot_shmem<16>);
-  // dot.run(dot_shmem<32>);
-  // dot.run(dot_shmem<64>);
-  // dot.run(dot_shmem<128>);
-  // dot.run(dot_shmem<256>);
-  // dot.run(dot_shmem<512>);
+  dot.run(hsys::dot_shmem<4>);
+  dot.run(hsys::dot_shmem<8>);
+  dot.run(hsys::dot_shmem<16>);
+  dot.run(hsys::dot_shmem<32>);
+  dot.run(hsys::dot_shmem<64>);
+  dot.run(hsys::dot_shmem<128>);
+  dot.run(hsys::dot_shmem<256>);
+  dot.run(hsys::dot_shmem<512>);
 
-  // dot.run(dot_nlog<32>);
-  // dot.run(dot_nlog<64>);
-  // dot.run(dot_nlog<128>);
-  // dot.run(dot_nlog<256>);
-  // dot.run(dot_nlog<512>);
-
-  dot.run(dot_nlog_vect<32>);
-  dot.run(dot_nlog_vect<64>);
-  dot.run(dot_nlog_vect<128>);
-  dot.run(dot_nlog_vect<256>);
-  dot.run(dot_nlog_vect<512>);
+  dot.run(hsys::dot_nlog<32>);
+  dot.run(hsys::dot_nlog<64>);
+  dot.run(hsys::dot_nlog<128>);
+  dot.run(hsys::dot_nlog<256>);
+  dot.run(hsys::dot_nlog<512>);
 }

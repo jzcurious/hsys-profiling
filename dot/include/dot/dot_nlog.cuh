@@ -3,9 +3,10 @@
 #include "utils.cuh"
 #include "warp_size.cuh"
 
+#include <core/vector.cuh>
 #include <core/vector_view.cuh>
 
-namespace hsys {
+namespace hsys::kernels {
 
 __device__ float warp_reduce(float val) {
 #pragma unroll
@@ -36,12 +37,32 @@ template <uint block_size>
 __global__ void dot_nlog(
     VectorView<float> c, const VectorView<float> a, const VectorView<float> b) {
   uint tid = internal::thread_id_1d();
+  float part_thread{0};
+  uint j = tid * 4;
 
-  auto part_blockwide
-      = block_reduce<block_size>(tid < a.size() ? a[tid] * b[tid] : float{0});
+  if (j + 3 < a.size()) {
+    float4 vec_a = *reinterpret_cast<const float4*>(&a[j]);  // NOLINT
+    float4 vec_b = *reinterpret_cast<const float4*>(&b[j]);  // NOLINT
+    part_thread
+        += vec_a.x * vec_b.x + vec_a.y * vec_b.y + vec_a.z * vec_b.z + vec_a.w * vec_b.w;
+  } else {
+    for (unsigned k = j; k < a.size(); ++k) part_thread += a[k] * b[k];
+  }
+
+  auto part_blockwide = block_reduce<block_size>(tid < a.size() ? part_thread : float{0});
   __syncthreads();
 
   if (tid < a.size() and threadIdx.x == 0) atomicAdd(&c[0], part_blockwide);
+}
+
+}  // namespace hsys::kernels
+
+namespace hsys {
+
+template <unsigned block, VectorK VectorT = hsys::Vector<float>>
+void dot_nlog(VectorT& c, const VectorT& a, const VectorT& b) {
+  const unsigned grid = std::ceil(a.size() / block);
+  hsys::kernels::dot_nlog<block><<<grid, block>>>(c.view(), a.view(), b.view());
 }
 
 }  // namespace hsys

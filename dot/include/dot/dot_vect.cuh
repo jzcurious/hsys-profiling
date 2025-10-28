@@ -2,13 +2,14 @@
 
 #include "utils.cuh"
 
+#include <core/vector.cuh>
 #include <core/vector_view.cuh>
 
-namespace hsys {
+namespace hsys::kernels {
 
 template <unsigned portion>
   requires(portion % 4 == 0)
-__global__ void dot_vectorized(
+__global__ void dot_vect(
     VectorView<float> c, const VectorView<float> a, const VectorView<float> b) {
   auto begin_idx = internal::thread_id_1d() * portion;
   float part{0};
@@ -29,6 +30,17 @@ __global__ void dot_vectorized(
   }
 
   atomicAdd(&c[0], part);
+}
+
+}  // namespace hsys::kernels
+
+namespace hsys {
+
+template <unsigned portion, VectorK VectorT = hsys::Vector<float>>
+void dot_vect(VectorT& c, const VectorT& a, const VectorT& b) {
+  constexpr unsigned block = 32;
+  const unsigned grid = std::ceil(a.size() / (block * portion));
+  hsys::kernels::dot_vect<portion><<<grid, block>>>(c.view(), a.view(), b.view());
 }
 
 }  // namespace hsys
