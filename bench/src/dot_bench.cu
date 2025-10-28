@@ -73,6 +73,10 @@ static const auto dot_vect = [](auto&&... args) {
   hsys::dot_vect<8>(args...);
 };
 
+static const auto dot_shmem = [](auto&&... args) {
+  hsys::dot_shmem<16>(args...);
+};
+
 static const auto dot_nlog = [](auto&&... args) {
   hsys::dot_nlog<128>(args...);
 };
@@ -93,6 +97,13 @@ BENCHMARK(BM_dot<dot_coars>)
 
 BENCHMARK(BM_dot<dot_vect>)
     ->Name("dot_vect")
+    ->RangeMultiplier(multiplier)
+    ->Ranges({range})
+    ->Unit(unit)
+    ->UseManualTime();
+
+BENCHMARK(BM_dot<dot_shmem>)
+    ->Name("dot_shmem")
     ->RangeMultiplier(multiplier)
     ->Ranges({range})
     ->Unit(unit)
