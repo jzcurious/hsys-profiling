@@ -47,7 +47,7 @@ static void BM_dot(benchmark::State& state) {
 
     {
       CUDATimer timer(&elapsed_time);
-      dot_impl_wrapper.template operator()(c, a, b);
+      dot_impl_wrapper.operator()(c, a, b);
     }
 
     benchmark::DoNotOptimize(elapsed_time);
@@ -61,24 +61,26 @@ constexpr int multiplier = 8;
 constexpr auto range = std::make_pair(8, 1 << 24);
 constexpr auto unit = benchmark::kMillisecond;
 
-static const auto dot_atomic = [](auto&&... args) {
-  hsys::dot_atomic<>(args...);
+using Vector = hsys::Vector<float>;
+
+static const auto dot_atomic = [](Vector& c, const Vector& a, const Vector& b) {
+  hsys::dot_atomic<>(c, a, b);
 };
 
-static const auto dot_coars = [](auto&&... args) {
-  hsys::dot_coars<256>(args...);
+static const auto dot_coars = [](Vector& c, const Vector& a, const Vector& b) {
+  hsys::dot_coars<256>(c, a, b);
 };
 
-static const auto dot_vect = [](auto&&... args) {
-  hsys::dot_vect<32>(args...);
+static const auto dot_vect = [](Vector& c, const Vector& a, const Vector& b) {
+  hsys::dot_vect<32>(c, a, b);
 };
 
-static const auto dot_shmem = [](auto&&... args) {
-  hsys::dot_shmem<16>(args...);
+static const auto dot_shmem = [](Vector& c, const Vector& a, const Vector& b) {
+  hsys::dot_shmem<16>(c, a, b);
 };
 
-static const auto dot_nlog = [](auto&&... args) {
-  hsys::dot_nlog<128>(args...);
+static const auto dot_nlog = [](Vector& c, const Vector& a, const Vector& b) {
+  hsys::dot_nlog<128>(c, a, b);
 };
 
 BENCHMARK(BM_dot<dot_atomic>)
