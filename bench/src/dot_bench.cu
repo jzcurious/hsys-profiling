@@ -70,7 +70,7 @@ static const auto dot_atomic = [](Vector& c, const Vector& a, const Vector& b) {
 };
 
 static const auto dot_coars = [](Vector& c, const Vector& a, const Vector& b) {
-  hsys::dot_coars<256>(c, a, b);
+  hsys::dot_coars<128>(c, a, b);
 };
 
 static const auto dot_vect = [](Vector& c, const Vector& a, const Vector& b) {
