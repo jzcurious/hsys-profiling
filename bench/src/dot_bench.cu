@@ -60,7 +60,7 @@ static void BM_dot(benchmark::State& state) {
 }
 
 constexpr int multiplier = 8;
-constexpr auto range = std::make_pair(8, 1 << 24);
+constexpr auto range = std::make_pair(8, 1 << 26);
 constexpr auto unit = benchmark::kMillisecond;
 
 using Vector = hsys::Vector<float>;
