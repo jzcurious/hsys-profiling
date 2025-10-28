@@ -4,7 +4,6 @@
 #include <kernels/dot_coarsened.cuh>
 #include <kernels/dot_nlog.cuh>
 #include <kernels/dot_nlog_vect.cuh>
-#include <kernels/dot_nlog_vect_fma.cuh>
 #include <kernels/dot_shmem.cuh>
 #include <kernels/dot_vectorized.cuh>
 
@@ -49,12 +48,6 @@ template <unsigned block = 32>
 void dot_nlog_vect(Vector& c, const Vector& a, const Vector& b) {
   const unsigned grid = std::ceil(a.size() / (block * 4));
   hsys::dot_nlog_vect<block><<<grid, block>>>(c.view(), a.view(), b.view());
-}
-
-template <unsigned block = 32>
-void dot_nlog_vect_fma(Vector& c, const Vector& a, const Vector& b) {
-  const unsigned grid = std::ceil(a.size() / (block * 4));
-  hsys::dot_nlog_vect_fma<block><<<grid, block>>>(c.view(), a.view(), b.view());
 }
 
 struct DotPipeline {
@@ -126,10 +119,4 @@ int main() {
   dot.run(dot_nlog_vect<128>);
   dot.run(dot_nlog_vect<256>);
   dot.run(dot_nlog_vect<512>);
-
-  dot.run(dot_nlog_vect_fma<32>);
-  dot.run(dot_nlog_vect_fma<64>);
-  dot.run(dot_nlog_vect_fma<128>);
-  dot.run(dot_nlog_vect_fma<256>);
-  dot.run(dot_nlog_vect_fma<512>);
 }
