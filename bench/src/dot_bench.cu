@@ -31,6 +31,8 @@ class CUDATimer {
     cudaEventSynchronize(stop_);
     cudaEventElapsedTime(elapse_time_s_, start_, stop_);
     *elapse_time_s_ /= 1000;
+    cudaEventDestroy(start_);
+    cudaEventDestroy(stop_);
   }
 };
 
