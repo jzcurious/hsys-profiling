@@ -58,7 +58,7 @@ static void BM_dot(benchmark::State& state) {
 }
 
 constexpr int multiplier = 8;
-constexpr auto range = std::make_pair(8, 1 << 26);
+constexpr auto range = std::make_pair(8, 1 << 24);
 constexpr auto unit = benchmark::kMillisecond;
 
 static const auto dot_atomic = [](auto&&... args) {
@@ -66,11 +66,11 @@ static const auto dot_atomic = [](auto&&... args) {
 };
 
 static const auto dot_coars = [](auto&&... args) {
-  hsys::dot_coars<8>(args...);
+  hsys::dot_coars<256>(args...);
 };
 
 static const auto dot_vect = [](auto&&... args) {
-  hsys::dot_vect<8>(args...);
+  hsys::dot_vect<32>(args...);
 };
 
 static const auto dot_shmem = [](auto&&... args) {
