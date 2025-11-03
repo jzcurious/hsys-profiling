@@ -31,5 +31,6 @@ setup_cuda_targets(
         75
     LIBS
         dot
+        matmul
         benchmark::benchmark_main
 )

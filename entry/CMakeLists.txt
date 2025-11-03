@@ -24,3 +24,19 @@ setup_cuda_targets(
         dot
         CUDA::curand
 )
+
+add_executable(matmul_suite ${CMAKE_CURRENT_SOURCE_DIR}/src/matmul.cu)
+
+setup_cuda_targets(
+    TARGETS
+        matmul_suite
+    FEATURES
+        cuda_std_20
+    OPTIONS
+        -Wall -O3
+    CUDA_MIN_ARCH
+        75
+    LIBS
+        matmul
+        CUDA::curand
+)

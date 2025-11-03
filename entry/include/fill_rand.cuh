@@ -1,9 +1,10 @@
 #include <chrono>
-#include <core/vector.cuh>
+#include <core/kinds.cuh>
 #include <curand.h>
 
-inline void fill_rand(
-    hsys::Vector<float>& vector, float mean = 0.0f, float stddev = 1.0f) {
+template <class T>
+  requires(hsys::VectorK<T> or hsys::MatrixK<T>)
+inline void fill_rand(T& tensor, float mean = 0.0f, float stddev = 1.0f) {
   curandGenerator_t gen;  // NOLINT
   curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT);
 
@@ -11,5 +12,5 @@ inline void fill_rand(
   unsigned long long seed = now.time_since_epoch().count();
 
   curandSetPseudoRandomGeneratorSeed(gen, seed);
-  curandGenerateNormal(gen, vector.data().data(), vector.size(), mean, stddev);
+  curandGenerateNormal(gen, tensor.data().data(), tensor.size(), mean, stddev);
 }
