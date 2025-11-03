@@ -31,7 +31,7 @@ static void BM_matmul(benchmark::State& state) {
 }
 
 inline constexpr int multiplier = 2;  // NOLINT
-inline constexpr auto range = std::make_pair(16, 1 << 10);  // NOLINT
+inline constexpr auto range = std::make_pair(16, 1 << 12);  // NOLINT
 inline constexpr auto unit = benchmark::kMillisecond;  // NOLINT
 
 using Matrix = hsys::Matrix<float>;

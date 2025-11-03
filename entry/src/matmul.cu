@@ -30,7 +30,7 @@ struct MatmulPipeline {
 };
 
 int main() {
-  MatmulPipeline matmul{1024};
+  MatmulPipeline matmul{4096};
 
   matmul.run(hsys::matmul<>);
   matmul.run(hsys::matmul_extend_bright<>);
