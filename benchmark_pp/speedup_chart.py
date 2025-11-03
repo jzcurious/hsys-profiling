@@ -29,6 +29,7 @@ def make_speedup_chart(
     xaxis_log=True,
     yaxis_log=True,
     dark=False,
+    baseline=False,
 ) -> go.Figure:
     fig = go.Figure()
 
@@ -38,8 +39,20 @@ def make_speedup_chart(
             y=target_df["speedup"],
             mode="lines+markers",
             marker=dict(size=6),
+            name="Speedup"
         )
     )
+
+    if baseline:
+        fig.add_trace(
+            go.Scatter(
+                x=target_df["size"],
+                y=[1] * len(target_df),
+                mode="lines",
+                line=dict(dash='dash', color='red'),
+                name="Baseline"
+            )
+        )
 
     title = f"Speedup: {target_df['benchmark'].values[0]} vs {target_df['reference'].values[0]}"
 
@@ -90,6 +103,13 @@ def main(argv):
         help="Target banchmark",
     )
 
+    argparser.add_argument(
+        "--baseline",
+        action="store_true",
+        default=False,
+        help="Add baseline (y = 1)",
+    )
+
     args = argparser.parse_args(argv)
 
     target_df = calc_speedup(
@@ -108,6 +128,7 @@ def main(argv):
             args.xlog,
             args.ylog,
             args.dark,
+            args.baseline,
         ),
         args.chart,
     )
