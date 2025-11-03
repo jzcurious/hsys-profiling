@@ -2,7 +2,8 @@
 #include <matmul/matmul.cuh>
 #include <matmul/matmul_extend_adown.cuh>
 #include <matmul/matmul_extend_bright.cuh>
-#include <matmul/matmul_extend_sym.cuh>
+#include <matmul/matmul_extend_sym2.cuh>
+#include <matmul/matmul_extend_sym3.cuh>
 
 #include "../include/fill_rand.cuh"
 
@@ -30,10 +31,11 @@ struct MatmulPipeline {
 };
 
 int main() {
-  MatmulPipeline matmul{4096};
+  MatmulPipeline matmul{1024};
 
   matmul.run(hsys::matmul<>);
   matmul.run(hsys::matmul_extend_bright<>);
   matmul.run(hsys::matmul_extend_adown<>);
-  matmul.run(hsys::matmul_extend_sym<>);
+  matmul.run(hsys::matmul_extend_sym2<>);
+  matmul.run(hsys::matmul_extend_sym3<>);
 }

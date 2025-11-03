@@ -6,7 +6,7 @@
 namespace hsys::kernels {
 
 template <std::size_t tile_size, AtomK AtomT>
-__global__ void matmul_extend_sym(
+__global__ void matmul_extend_sym2(
     MatrixView<AtomT> c, const MatrixView<AtomT> a, const MatrixView<AtomT> b) {
 
   __shared__ AtomT tile_a1[tile_size][tile_size];  // NOLINT
@@ -57,11 +57,11 @@ __global__ void matmul_extend_sym(
 namespace hsys {
 
 template <MatrixK MatrixT = Matrix<float>>
-void matmul_extend_sym(MatrixT& c, const MatrixT& a, const MatrixT& b) {
+void matmul_extend_sym2(MatrixT& c, const MatrixT& a, const MatrixT& b) {
   constexpr auto block = dim3(16, 16);
   const auto grid
       = dim3(std::ceil(c.ncols() / (block.x * 2)), std::ceil(c.nrows() / (block.y * 2)));
-  hsys::kernels::matmul_extend_sym<16><<<grid, block>>>(c.view(), a.view(), b.view());
+  hsys::kernels::matmul_extend_sym2<16><<<grid, block>>>(c.view(), a.view(), b.view());
 }
 
 }  // namespace hsys

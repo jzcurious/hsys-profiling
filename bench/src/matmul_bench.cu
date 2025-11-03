@@ -3,7 +3,7 @@
 #include <matmul/matmul.cuh>
 #include <matmul/matmul_extend_adown.cuh>
 #include <matmul/matmul_extend_bright.cuh>
-#include <matmul/matmul_extend_sym.cuh>
+#include <matmul/matmul_extend_symn.cuh>
 
 #include "../include/cuda_timer.cuh"
 
@@ -48,9 +48,30 @@ static const auto matmul_extend_adown = [](Matrix& c, const Matrix& a, const Mat
   hsys::matmul_extend_adown<>(c, a, b);
 };
 
-static const auto matmul_extend_sym = [](Matrix& c, const Matrix& a, const Matrix& b) {
-  hsys::matmul_extend_sym<>(c, a, b);
-};
+static const auto matmul_extend_sym_t16_n2
+    = [](Matrix& c, const Matrix& a, const Matrix& b) {
+        hsys::matmul_extend_symn<16, 2>(c, a, b);
+      };
+
+static const auto matmul_extend_sym_t16_n4
+    = [](Matrix& c, const Matrix& a, const Matrix& b) {
+        hsys::matmul_extend_symn<16, 4>(c, a, b);
+      };
+
+static const auto matmul_extend_sym_t16_n5
+    = [](Matrix& c, const Matrix& a, const Matrix& b) {
+        hsys::matmul_extend_symn<16, 4>(c, a, b);
+      };
+
+static const auto matmul_extend_sym_t32_n2
+    = [](Matrix& c, const Matrix& a, const Matrix& b) {
+        hsys::matmul_extend_symn<16, 4>(c, a, b);
+      };
+
+static const auto matmul_extend_sym_t32_n4
+    = [](Matrix& c, const Matrix& a, const Matrix& b) {
+        hsys::matmul_extend_symn<16, 4>(c, a, b);
+      };
 
 BENCHMARK(BM_matmul<matmul>)
     ->Name("matmul")
@@ -73,8 +94,36 @@ BENCHMARK(BM_matmul<matmul_extend_adown>)
     ->Unit(unit)
     ->UseManualTime();
 
-BENCHMARK(BM_matmul<matmul_extend_sym>)
-    ->Name("matmul_extend_sym")
+BENCHMARK(BM_matmul<matmul_extend_sym_t16_n2>)
+    ->Name("matmul_extend_sym_t16_n2")
+    ->RangeMultiplier(multiplier)
+    ->Ranges({range})
+    ->Unit(unit)
+    ->UseManualTime();
+
+BENCHMARK(BM_matmul<matmul_extend_sym_t16_n4>)
+    ->Name("matmul_extend_sym_t16_n4")
+    ->RangeMultiplier(multiplier)
+    ->Ranges({range})
+    ->Unit(unit)
+    ->UseManualTime();
+
+BENCHMARK(BM_matmul<matmul_extend_sym_t16_n5>)
+    ->Name("matmul_extend_sym_t16_n5")
+    ->RangeMultiplier(multiplier)
+    ->Ranges({range})
+    ->Unit(unit)
+    ->UseManualTime();
+
+BENCHMARK(BM_matmul<matmul_extend_sym_t32_n2>)
+    ->Name("matmul_extend_sym_t32_n2")
+    ->RangeMultiplier(multiplier)
+    ->Ranges({range})
+    ->Unit(unit)
+    ->UseManualTime();
+
+BENCHMARK(BM_matmul<matmul_extend_sym_t32_n4>)
+    ->Name("matmul_extend_sym_t32_n4")
     ->RangeMultiplier(multiplier)
     ->Ranges({range})
     ->Unit(unit)
