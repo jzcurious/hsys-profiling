@@ -31,6 +31,21 @@ setup_cuda_targets(
         75
     LIBS
         dot
+        benchmark::benchmark_main
+)
+
+add_executable(matmul_bench ${CMAKE_CURRENT_SOURCE_DIR}/src/matmul_bench.cu)
+
+setup_cuda_targets(
+    TARGETS
+        matmul_bench
+    FEATURES
+        cuda_std_20
+    OPTIONS
+        -Wall -O3
+    CUDA_MIN_ARCH
+        75
+    LIBS
         matmul
         benchmark::benchmark_main
 )
