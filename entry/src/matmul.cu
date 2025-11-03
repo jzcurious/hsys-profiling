@@ -4,6 +4,7 @@
 #include <matmul/matmul_extend_bright.cuh>
 #include <matmul/matmul_extend_sym2.cuh>
 #include <matmul/matmul_extend_sym3.cuh>
+#include <matmul/matmul_extend_symn.cuh>
 
 #include "../include/fill_rand.cuh"
 
@@ -38,4 +39,5 @@ int main() {
   matmul.run(hsys::matmul_extend_adown<>);
   matmul.run(hsys::matmul_extend_sym2<>);
   matmul.run(hsys::matmul_extend_sym3<>);
+  matmul.run(hsys::matmul_extend_symn<>);
 }
