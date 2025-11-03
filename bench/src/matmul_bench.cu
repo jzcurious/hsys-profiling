@@ -73,6 +73,11 @@ static const auto matmul_extend_sym_t32_n4
         hsys::matmul_extend_symn<16, 4>(c, a, b);
       };
 
+static const auto matmul_extend_sym_t8_n4
+    = [](Matrix& c, const Matrix& a, const Matrix& b) {
+        hsys::matmul_extend_symn<8, 4>(c, a, b);
+      };
+
 static const auto matmul_extend_sym_t8_n10
     = [](Matrix& c, const Matrix& a, const Matrix& b) {
         hsys::matmul_extend_symn<8, 10>(c, a, b);
@@ -136,6 +141,13 @@ BENCHMARK(BM_matmul<matmul_extend_sym_t32_n4>)
 
 BENCHMARK(BM_matmul<matmul_extend_sym_t8_n10>)
     ->Name("matmul_extend_sym_t8_n10")
+    ->RangeMultiplier(multiplier)
+    ->Ranges({range})
+    ->Unit(unit)
+    ->UseManualTime();
+
+BENCHMARK(BM_matmul<matmul_extend_sym_t8_n4>)
+    ->Name("matmul_extend_sym_t8_n4")
     ->RangeMultiplier(multiplier)
     ->Ranges({range})
     ->Unit(unit)
