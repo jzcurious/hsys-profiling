@@ -8,7 +8,7 @@ namespace hsys::kernels {
 __global__ void vadd(
     VectorViewK auto c, const VectorViewK auto a, const VectorViewK auto b) {
   auto tid = blockDim.x * blockIdx.x + threadIdx.x;
-  c(tid) += a(tid) + b(tid);
+  c[tid] += a[tid] + b[tid];
 }
 
 }  // namespace hsys::kernels

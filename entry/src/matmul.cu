@@ -6,7 +6,7 @@
 #include <matmul/matmul_extend_sym3.cuh>
 #include <matmul/matmul_extend_symn.cuh>
 
-#include "../include/fill_rand.cuh"
+#include <fill_rand.cuh>
 
 using Matrix = hsys::Matrix<float>;
 

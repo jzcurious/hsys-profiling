@@ -7,8 +7,6 @@ set(CMAKE_CUDA_USE_RESPONSE_FILE_FOR_OBJECTS OFF)
 
 include(../cmake/setup_cuda_targets.cmake)
 
-find_package(CUDAToolkit REQUIRED)
-
 add_executable(dot_suite ${CMAKE_CURRENT_SOURCE_DIR}/src/dot.cu)
 
 setup_cuda_targets(
@@ -22,7 +20,7 @@ setup_cuda_targets(
         75
     LIBS
         dot
-        CUDA::curand
+        rand
 )
 
 add_executable(matmul_suite ${CMAKE_CURRENT_SOURCE_DIR}/src/matmul.cu)
@@ -38,5 +36,5 @@ setup_cuda_targets(
         75
     LIBS
         matmul
-        CUDA::curand
+        rand
 )

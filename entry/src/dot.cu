@@ -6,7 +6,7 @@
 #include <dot/dot_vect.cuh>
 #include <iostream>
 
-#include "../include/fill_rand.cuh"
+#include <fill_rand.cuh>
 
 using Vector = hsys::Vector<float>;
 
