@@ -1,6 +1,5 @@
 #pragma once
 
-#include "utils.cuh"
 #include "warp_size.cuh"
 
 #include <core/vector.cuh>
@@ -36,7 +35,7 @@ __device__ float block_reduce(float val) {
 template <uint block_size>
 __global__ void dot_nlog(
     VectorView<float> c, const VectorView<float> a, const VectorView<float> b) {
-  uint tid = internal::thread_id_1d();
+  uint tid = blockDim.x * blockIdx.x + threadIdx.x;
   float part_thread{0};
   uint j = tid * 4;
 

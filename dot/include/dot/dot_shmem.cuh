@@ -1,7 +1,5 @@
 #pragma once
 
-#include "utils.cuh"
-
 #include <core/vector.cuh>
 #include <core/vector_view.cuh>
 
@@ -12,7 +10,7 @@ template <unsigned portion>
 __global__ void dot_shmem(
     VectorView<float> c, const VectorView<float> a, const VectorView<float> b) {
 
-  auto begin_idx = internal::thread_id_1d() * portion;
+  auto begin_idx = blockDim.x * blockIdx.x + threadIdx.x * portion;
   float part_thread{0};
   constexpr unsigned nvec = portion / 4;
 

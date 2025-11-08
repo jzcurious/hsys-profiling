@@ -1,7 +1,5 @@
 #pragma once
 
-#include "utils.cuh"
-
 #include <core/kinds.cuh>
 #include <core/vector.cuh>
 
@@ -10,7 +8,7 @@ namespace hsys::kernels {
 template <unsigned portion>
 __global__ void dot_coars(
     VectorViewK auto c, const VectorViewK auto a, const VectorViewK auto b) {
-  auto begin_idx = internal::thread_id_1d() * portion;
+  auto begin_idx = blockDim.x * blockIdx.x + threadIdx.x * portion;
   typename decltype(c)::atom_t part{0};
 
 #pragma unroll
