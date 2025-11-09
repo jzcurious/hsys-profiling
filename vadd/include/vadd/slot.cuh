@@ -7,14 +7,6 @@ namespace hsys {
 
 template <ViewK... ArgT>
 struct Slot {
-  Slot() {
-    std::apply([](auto&... args) { ((args = nullptr), ...); }, args_);
-  }
-
-  template <class... T>
-  Slot(T&&... args)
-      : args_{std::forward<T>(args)...} {}
-
   Slot(const Slot&) = delete;
   Slot(Slot&&) = delete;
 

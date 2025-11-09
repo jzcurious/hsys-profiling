@@ -26,7 +26,7 @@ static const auto vadd = [](Vector& c, const Vector& a, const Vector& b) {
   hsys::vadd(c, a, b);
 };
 
-static const auto vadd_persist = [](Vector& c, const Vector& a, const Vector& b) {
+static const auto vadd_persist = [](Vector& c, Vector& a, Vector& b) {
   hsys::vadd_persist(c, a, b);
 };
 

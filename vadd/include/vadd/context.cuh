@@ -1,19 +1,21 @@
 #pragma once
 
+#include <core/data.cuh>
+#include <core/kinds.cuh>
 #include <tuple>
+
+#include "slot.cuh"
 
 namespace hsys {
 
-template <class SlotT>
+template <ViewK... ArgT>
 struct Context {
+  using slot_t = Slot<ArgT...>;
+
   Context() {
     cudaStreamCreate(&stream_);
-    cudaMalloc(&slot_, sizeof(SlotT));
-    std::apply(
-        [](auto*&... arg_ptr) {
-          (cudaMalloc(&arg_ptr, sizeof(std::decay_t<decltype(arg_ptr)>)), ...);
-        },
-        slot_->args());
+    cudaMalloc(&slot_, sizeof(Slot<ArgT...>));
+    cudaMalloc(&args_, sizeof(std::tuple<ArgT...>));
   }
 
   Context(const Context&) = delete;
@@ -26,32 +28,29 @@ struct Context {
     return stream_;
   }
 
-  [[nodiscard]] SlotT* slot() {
+  [[nodiscard]] Slot<ArgT...>* slot() {
     return slot_;
   }
 
   template <class... T>
   __host__ void set_args(const T&... new_arg) {
-    std::apply(
-        [&](auto&... arg_ptr) {
-          ((cudaMemcpy(
-               arg_ptr, &new_arg, sizeof(decltype(new_arg)), cudaMemcpyHostToDevice)),
-              ...);
-        },
-        slot_->args());
+    auto new_args = std::make_tuple(new_arg...);
+    cudaMemcpy(args_, &new_args, sizeof(new_args), cudaMemcpyHostToDevice);
+    [&]<std::size_t... i>(std::index_sequence<i...>) {
+      ((std::get<i>(slot_->args()) = &std::get<i>(*args_)), ...);
+    }(std::make_index_sequence<sizeof...(new_arg)>{});
   }
 
   ~Context() {
-    cudaStreamDestroy(stream_);
-    if (slot_) {
-      std::apply([](auto&... arg_ptr) { (cudaFree(arg_ptr), ...); }, slot_->args());
-      cudaFree(slot_);
-    }
+    if (stream_) cudaStreamDestroy(stream_);
+    if (args_) cudaFree(args_);
+    if (slot_) cudaFree(slot_);
   }
 
  private:
   cudaStream_t stream_ = nullptr;
-  SlotT* slot_ = nullptr;
+  Slot<ArgT...>* slot_ = nullptr;
+  std::tuple<ArgT...>* args_ = nullptr;
 };
 
 }  // namespace hsys
