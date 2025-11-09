@@ -13,7 +13,7 @@ target_compile_features(vadd INTERFACE
 )
 
 target_compile_options(vadd INTERFACE
-    -Wall -O3
+    -Wall -O3 --expt-relaxed-constexpr
 )
 
 target_include_directories(vadd INTERFACE

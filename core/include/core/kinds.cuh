@@ -21,6 +21,9 @@ template <class T>
 concept MatrixViewK = requires { typename T::hsys_matrix_view_feature; };
 
 template <class T>
+concept ViewK = MatrixViewK<T> or VectorViewK<T>;
+
+template <class T>
 concept MatrixK = requires { typename T::hsys_matrix_feature; };
 
 }  // namespace hsys
