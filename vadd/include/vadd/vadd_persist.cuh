@@ -10,6 +10,10 @@ struct VAddTask {
 
   VAddTask() {
     cudaStreamCreate(&stream_);
+    cudaMallocManaged(&processed_ptr_, sizeof(bool));
+    cudaMallocManaged(&destroyed_ptr_, sizeof(bool));
+    *processed_ptr_ = true;
+    *destroyed_ptr_ = false;
   }
 
   VAddTask(const VAddTask&) = delete;
@@ -20,6 +24,10 @@ struct VAddTask {
 
   __host__ __device__ std::size_t size() const {
     return a_->size();
+  }
+
+  __host__ cudaStream_t stream() const {
+    return stream_;
   }
 
   __host__ __device__ const AtomT& a(std::size_t i) {
@@ -34,35 +42,45 @@ struct VAddTask {
     return (*c_)[i];
   }
 
+  [[nodiscard]] __host__ __device__ bool is_destroyed() const {
+    return destroyed_ptr_ and *destroyed_ptr_;
+  }
+
+  [[nodiscard]] __host__ __device__ bool is_processed() const {
+    return processed_ptr_ and *processed_ptr_;
+  }
+
+  [[nodiscard]] __host__ __device__ bool has_args() const {
+    return a_ and b_ and c_;
+  }
+
   __host__ void set_args(
       VectorView<AtomT>* c, const VectorView<AtomT>* a, const VectorView<AtomT>* b) {
-    if (destroyed_) return;
+    if (is_destroyed()) return;
     a_ = a;
     b_ = b;
     c_ = c;
   }
 
-  [[nodiscard]] __host__ __device__ bool is_destroyed() const {
-    return destroyed_;
-  }
-
   [[nodiscard]] __host__ __device__ bool is_issued() const {
-    return (not destroyed_) and (not processed_) and (a_ and b_ and c_);
+    return (not is_destroyed()) and (not is_processed()) and has_args();
   }
 
   __host__ bool issue() {
-    bool ready_for_issue = (not destroyed_) and (a_ and b_ and c_);
-    if (ready_for_issue) processed_ = false;
+    bool ready_for_issue = (not is_destroyed()) and has_args();
+    if (ready_for_issue) *processed_ptr_ = false;
     return ready_for_issue;
   }
 
   __device__ bool complete() {
-    if (is_issued()) return processed_ = true;
+    if (is_issued()) return *processed_ptr_ = true;
     return false;
   }
 
   __host__ void destroy() {
-    destroyed_ = true;
+    *destroyed_ptr_ = true;
+    cudaFree(destroyed_ptr_);
+    cudaFree(processed_ptr_);
     cudaStreamDestroy(stream_);
   }
 
@@ -72,8 +90,8 @@ struct VAddTask {
 
  private:
   cudaStream_t stream_ = nullptr;
-  bool processed_ = true;
-  bool destroyed_ = false;
+  bool* destroyed_ptr_ = nullptr;
+  bool* processed_ptr_ = nullptr;
   const VectorView<AtomT>* a_ = nullptr;
   const VectorView<AtomT>* b_ = nullptr;
   VectorView<AtomT>* c_ = nullptr;
@@ -115,7 +133,7 @@ void vadd_persist(Vector<AtomT>& c, const Vector<AtomT>& a, const Vector<AtomT>&
   task.issue();
 
   if (first_call) {
-    hsys::kernels::vadd_persist<<<1, block>>>(&task);
+    hsys::kernels::vadd_persist<<<1, block, 0, task.stream()>>>(&task);
     first_call = false;
   }
 }
