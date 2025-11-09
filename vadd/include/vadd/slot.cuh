@@ -41,13 +41,6 @@ struct Slot {
     return expired_;
   }
 
-  template <class... T>
-  __host__ void set_args(T&&... new_args) {
-    std::apply(
-        [&new_args...](auto&... args) { ((args = std::forward<T>(new_args)), ...); },
-        args_);
-  }
-
   ~Slot() = default;
 
  private:

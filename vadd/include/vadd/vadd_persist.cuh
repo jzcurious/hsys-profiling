@@ -43,7 +43,7 @@ void vadd_persist(Vector<AtomT>& c, const Vector<AtomT>& a, const Vector<AtomT>&
   static Context<kernels::VAddSlot<AtomT>> ctx;
   static bool first_call = true;
 
-  ctx.slot()->set_args(&c.view(), &a.view(), &b.view());
+  ctx.set_args(&c.view(), &a.view(), &b.view());
 
   if (first_call) {
     hsys::kernels::vadd_persist<<<1, block, 0, ctx.stream()>>>(ctx.slot());
