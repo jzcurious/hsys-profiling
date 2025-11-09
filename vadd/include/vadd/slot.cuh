@@ -8,15 +8,12 @@ namespace hsys {
 template <ViewK... ArgT>
 struct Slot {
   Slot() {
-    cudaStreamCreate(&stream_);
     std::apply([](auto&... args) { ((args = nullptr), ...); }, args_);
   }
 
   template <class... T>
   Slot(T&&... args)
-      : args_{std::forward<T>(args)...} {
-    cudaStreamCreate(&stream_);
-  }
+      : args_{std::forward<T>(args)...} {}
 
   Slot(const Slot&) = delete;
   Slot(Slot&&) = delete;
@@ -44,24 +41,17 @@ struct Slot {
     return expired_;
   }
 
-  __host__ cudaStream_t stream() const {
-    return stream_;
-  }
-
   template <class... T>
-  __host__ void operator()(T&&... new_args) {
+  __host__ void set_args(T&&... new_args) {
     std::apply(
         [&new_args...](auto&... args) { ((args = std::forward<T>(new_args)), ...); },
         args_);
   }
 
-  ~Slot() {
-    cudaStreamDestroy(stream_);
-  }
+  ~Slot() = default;
 
  private:
   bool expired_ = false;
-  cudaStream_t stream_ = nullptr;
   std::tuple<ArgT*...> args_{};
 };
 
