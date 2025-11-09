@@ -2,30 +2,6 @@
 #include <vadd/vadd.cuh>
 #include <vadd/vadd_persist.cuh>
 
-// #include "../include/cuda_timer.cuh"
-
-// template <auto vadd_impl_wrapper>
-// static void BM_vadd(benchmark::State& state) {
-//   auto size = state.range(0);
-
-//   auto a = hsys::Vector<float>(size);
-//   auto b = hsys::Vector<float>(size);
-//   auto c = hsys::Vector<float>(size);
-
-//   for (auto _ : state) {
-//     float elapsed_time = 0;
-
-//     {
-//       CUDATimer timer(&elapsed_time);
-//       vadd_impl_wrapper.operator()(c, a, b);
-//     }
-
-//     benchmark::DoNotOptimize(elapsed_time);
-//     benchmark::ClobberMemory();
-//     state.SetIterationTime(elapsed_time);
-//   }
-// }
-
 template <auto vadd_impl_wrapper>
 static void BM_vadd(benchmark::State& state) {
   auto size = state.range(0);

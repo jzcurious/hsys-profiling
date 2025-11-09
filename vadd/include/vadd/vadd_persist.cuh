@@ -15,7 +15,7 @@ __global__ void vadd_persist(VAddSlot<AtomT>* slot) {
   auto tid = threadIdx.x;
 
   while (not slot->is_expired()) {
-    if (not slot->is_empty()) continue;
+    if (slot->is_empty()) continue;
     __syncthreads();
 
     auto [c, a, b] = slot->args();
@@ -41,13 +41,14 @@ void vadd_persist(Vector<AtomT>& c, const Vector<AtomT>& a, const Vector<AtomT>&
   static kernels::VAddSlot<AtomT> slot;
   static bool first_call = true;
 
-  while (not slot.is_empty());
   slot(&c.view(), &a.view(), &b.view());
 
   if (first_call) {
     hsys::kernels::vadd_persist<<<1, block, 0, slot.stream()>>>(&slot);
     first_call = false;
   }
+
+  while (not slot.is_empty());
 }
 
 }  // namespace hsys

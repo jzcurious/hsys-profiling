@@ -9,6 +9,7 @@ template <ViewK... ArgT>
 struct Slot {
   Slot() {
     cudaStreamCreate(&stream_);
+    std::apply([](auto&... args) { ((args = nullptr), ...); }, args_);
   }
 
   template <class... T>
