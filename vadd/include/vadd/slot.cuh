@@ -14,15 +14,19 @@ struct Slot {
   Slot& operator=(Slot&&) = delete;
 
   [[nodiscard]] __host__ __device__ bool is_empty() const {
-    return std::apply([](const auto&... args) { return (not(args or ...)); }, args_);
+    return args_;
   }
 
-  __host__ __device__ auto& args() {
+  __host__ __device__ void set_args(std::tuple<ArgT...>* new_args) {
+    args_ = new_args;
+  }
+
+  __host__ __device__ std::tuple<ArgT...>* args() {
     return args_;
   }
 
   __host__ __device__ void clear() {
-    std::apply([](auto&... args) { ((args = nullptr), ...); }, args_);
+    args_ = nullptr;
   }
 
   __host__ __device__ void expire() {
@@ -37,7 +41,7 @@ struct Slot {
 
  private:
   bool expired_ = false;
-  std::tuple<ArgT*...> args_{};
+  std::tuple<ArgT...>* args_ = nullptr;
 };
 
 }  // namespace hsys

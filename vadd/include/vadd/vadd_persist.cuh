@@ -21,12 +21,12 @@ __global__ void vadd_persist(VAddSlot<AtomT>* slot) {
     if (slot->is_empty()) continue;
     __syncthreads();
 
-    auto [c, a, b] = slot->args();
-    auto size = a->size();
+    auto [c, a, b] = *slot->args();
+    auto n = a.size();
 
-    for (std::size_t offset = 0; offset < size; offset += blockDim.x) {
+    for (std::size_t offset = 0; offset < n; offset += blockDim.x) {
       auto i = tid + offset;
-      if (i < size) (*c)[i] = (*a)[i] + (*b)[i];
+      if (i < n) c[i] = a[i] + b[i];
     }
 
     __syncthreads();

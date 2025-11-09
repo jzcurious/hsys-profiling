@@ -14,7 +14,7 @@ struct Context {
 
   Context() {
     cudaStreamCreate(&stream_);
-    cudaMalloc(&slot_, sizeof(Slot<ArgT...>));
+    cudaMallocManaged(&slot_, sizeof(Slot<ArgT...>));
     cudaMalloc(&args_, sizeof(std::tuple<ArgT...>));
   }
 
@@ -32,19 +32,20 @@ struct Context {
     return slot_;
   }
 
-  template <class... T>
+  template <ViewK... T>
   __host__ void set_args(const T&... new_arg) {
     auto new_args = std::make_tuple(new_arg...);
     cudaMemcpy(args_, &new_args, sizeof(new_args), cudaMemcpyHostToDevice);
-    [&]<std::size_t... i>(std::index_sequence<i...>) {
-      ((std::get<i>(slot_->args()) = &std::get<i>(*args_)), ...);
-    }(std::make_index_sequence<sizeof...(new_arg)>{});
+    slot_->set_args(args_);
   }
 
   ~Context() {
-    if (stream_) cudaStreamDestroy(stream_);
+    if (slot_) {
+      slot_->expire();
+      cudaFree(slot_);
+    }
     if (args_) cudaFree(args_);
-    if (slot_) cudaFree(slot_);
+    if (stream_) cudaStreamDestroy(stream_);
   }
 
  private:
