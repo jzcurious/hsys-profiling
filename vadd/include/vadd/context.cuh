@@ -10,7 +10,9 @@ struct Context {
     cudaStreamCreate(&stream_);
     cudaMalloc(&slot_, sizeof(SlotT));
     std::apply(
-        [](auto&... arg_ptr) { (cudaMalloc(&arg_ptr, sizeof(decltype(*arg_ptr))), ...); },
+        [](auto*&... arg_ptr) {
+          (cudaMalloc(&arg_ptr, sizeof(std::decay_t<decltype(arg_ptr)>)), ...);
+        },
         slot_->args());
   }
 
@@ -32,11 +34,8 @@ struct Context {
   __host__ void set_args(const T&... new_arg) {
     std::apply(
         [&](auto&... arg_ptr) {
-          // NOLINTNEXTLINE
-          ((cudaMemcpy(const_cast<void*>(static_cast<const void*>(arg_ptr)),
-               &new_arg,
-               sizeof(decltype(new_arg)),
-               cudaMemcpyHostToDevice)),
+          ((cudaMemcpy(
+               arg_ptr, &new_arg, sizeof(decltype(new_arg)), cudaMemcpyHostToDevice)),
               ...);
         },
         slot_->args());
@@ -45,13 +44,8 @@ struct Context {
   ~Context() {
     cudaStreamDestroy(stream_);
     if (slot_) {
+      std::apply([](auto&... arg_ptr) { (cudaFree(arg_ptr), ...); }, slot_->args());
       cudaFree(slot_);
-      std::apply(
-          [](auto&... arg_ptr) {
-            // NOLINTNEXTLINE
-            (cudaFree(const_cast<void*>(static_cast<const void*>(arg_ptr))), ...);
-          },
-          slot_->args());
     }
   }
 

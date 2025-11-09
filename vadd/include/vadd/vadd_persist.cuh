@@ -9,8 +9,7 @@
 namespace hsys::kernels {
 
 template <AtomK AtomT>
-using VAddSlot
-    = Slot<VectorView<AtomT>, const VectorView<AtomT>, const VectorView<AtomT>>;
+using VAddSlot = Slot<VectorView<AtomT>, VectorView<AtomT>, VectorView<AtomT>>;
 
 template <AtomK AtomT>
 __global__ void vadd_persist(VAddSlot<AtomT>* slot) {
