@@ -15,11 +15,11 @@ using VAddSlot = typename VAddContext<AtomT>::slot_t;
 
 template <AtomK AtomT>
 __global__ void vadd_persist(VAddSlot<AtomT>* slot) {
-  auto tid = threadIdx.x;
+  const auto tid = threadIdx.x;
 
   while (not slot->is_expired()) {
-    if (slot->is_empty()) continue;
     __syncthreads();
+    if (slot->is_empty()) continue;
 
     auto [c, a, b] = *slot->args();
     auto n = a.size();
@@ -38,7 +38,7 @@ __global__ void vadd_persist(VAddSlot<AtomT>* slot) {
 
 namespace hsys {
 
-template <AtomK AtomT>
+template <AtomK AtomT = float>
 void vadd_persist(Vector<AtomT>& c, Vector<AtomT>& a, Vector<AtomT>& b) {
   constexpr unsigned block = 1024;
   static kernels::VAddContext<AtomT> ctx;
