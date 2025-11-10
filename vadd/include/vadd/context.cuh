@@ -35,7 +35,7 @@ struct Context {
   template <ViewK... T>
   __host__ void set_args(const T&... new_arg) {
     auto new_args = std::make_tuple(new_arg...);
-    cudaMemcpy(args_, &new_args, sizeof(new_args), cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(args_, &new_args, sizeof(new_args), cudaMemcpyHostToDevice, stream_);
     slot_->set_args(args_);
   }
 
