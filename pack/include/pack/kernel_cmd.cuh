@@ -42,6 +42,9 @@ __global__ void kernel_cmd(TaskT... task_pack) {
   ((do_task_grid(task_pack)), ...);
 }
 
+template <class... TaskT>
+__global__ void kernel_cmd_noop(TaskT... task_pack) {}
+
 }  // namespace hsys::kernels
 
 namespace hsys {
@@ -53,6 +56,15 @@ void run_pack(TaskT... task) {
   auto max_size = std::max({std::get<0>(task.params()).size()...});
   unsigned const grid = std::ceil(static_cast<float>(max_size) / block);
   kernels::kernel_cmd<<<grid, block>>>(task...);
+}
+
+template <class... TaskT>
+  requires(sizeof...(TaskT) > 0)
+void run_pack_noop(TaskT... task) {
+  constexpr int block = 128;
+  auto max_size = std::max({std::get<0>(task.params()).size()...});
+  unsigned const grid = std::ceil(static_cast<float>(max_size) / block);
+  kernels::kernel_cmd_noop<<<grid, block>>>(task...);
 }
 
 }  // namespace hsys
