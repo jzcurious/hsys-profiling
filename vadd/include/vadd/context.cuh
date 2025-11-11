@@ -40,12 +40,10 @@ struct Context {
   }
 
   ~Context() {
-    if (slot_) {
-      slot_->expire();
-      cudaFree(slot_);
-    }
-    if (args_) cudaFree(args_);
     if (stream_) cudaStreamDestroy(stream_);
+    slot_->expire();
+    cudaFree(slot_);
+    if (args_) cudaFree(args_);
   }
 
  private:
