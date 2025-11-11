@@ -25,9 +25,9 @@ class PackTest : public ::testing::TestWithParam<std::tuple<std::size_t, float>>
     // clang-format off
     hsys::run_pack(
       hsys::Task(hsys::Add{}, y.view(), x1.view(), x2.view()), // +
-      hsys::Task(hsys::Mul{}, y.view(), y.view(), x2.view()),  // *
-      hsys::Task(hsys::Sub{}, y.view(), y.view(), x3.view()),  // -
-      hsys::Task(hsys::Div{}, y.view(), y.view(), x4.view())   // /
+      hsys::Task(hsys::Mul{}, y.view(),  y.view(), x2.view()), // *
+      hsys::Task(hsys::Sub{}, y.view(),  y.view(), x3.view()), // -
+      hsys::Task(hsys::Div{}, y.view(),  y.view(), x4.view())  // /
     );
     // clang-format on
 
