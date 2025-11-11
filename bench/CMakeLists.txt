@@ -49,19 +49,3 @@ setup_cuda_targets(
         matmul
         benchmark::benchmark_main
 )
-
-add_executable(vadd_bench ${CMAKE_CURRENT_SOURCE_DIR}/src/vadd_bench.cu)
-
-setup_cuda_targets(
-    TARGETS
-        vadd_bench
-    FEATURES
-        cuda_std_20
-    OPTIONS
-        -Wall -O3
-    CUDA_MIN_ARCH
-        75
-    LIBS
-        vadd
-        benchmark::benchmark_main
-)

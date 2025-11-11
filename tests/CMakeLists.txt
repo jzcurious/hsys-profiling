@@ -31,8 +31,7 @@ target_compile_options(tests PRIVATE
 )
 
 target_link_libraries(tests PRIVATE
-    core
-    vadd
+    pack
     rand
     GTest::gtest_main
 )

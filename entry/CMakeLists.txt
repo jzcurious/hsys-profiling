@@ -38,19 +38,3 @@ setup_cuda_targets(
         matmul
         rand
 )
-
-add_executable(vadd_suite ${CMAKE_CURRENT_SOURCE_DIR}/src/vadd.cu)
-
-setup_cuda_targets(
-    TARGETS
-        vadd_suite
-    FEATURES
-        cuda_std_20
-    OPTIONS
-        -Wall -O3
-    CUDA_MIN_ARCH
-        75
-    LIBS
-        vadd
-        rand
-)

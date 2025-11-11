@@ -24,4 +24,5 @@ target_include_directories(rand INTERFACE
 
 target_link_libraries(rand INTERFACE
     CUDA::curand
+    core
 )
