@@ -17,7 +17,7 @@ struct Pack {
   __host__ Pack(const T&... task)
       : tasks_{task...} {}
 
-  __device__ tasks_t& tasks() {
+  __host__ __device__ tasks_t& tasks() {
     return tasks_;
   }
 

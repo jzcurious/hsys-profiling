@@ -72,14 +72,10 @@ __global__ void kernel_cmd(PackKind auto task_pack) {
 namespace hsys {
 
 template <class... TaskT>
-void run_pack_pack(const TaskT&... task_pack) {
-  auto pack = Pack(task_pack...);
+void run_pack_pack(const TaskT&... task) {
+  auto pack = Pack(task...);
   constexpr int block = 128;
-  std::size_t max_size = 0;
-  for (auto t : pack.tasks()) {
-    auto s = std::get<0>(std::get<0>(t).params()).size();
-    if (s > max_size) max_size = s;
-  }
+  auto max_size = std::max({std::get<0>(task.params()).size()...});
   unsigned const grid = std::ceil(static_cast<float>(max_size) / block);
   kernels::pack::kernel_cmd<<<grid, block>>>(pack);
 }
