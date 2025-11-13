@@ -5,7 +5,7 @@
 #include <core/vector_view.cuh>
 #include <task/cmd.cuh>
 
-namespace hsys::kernels {
+namespace hsys::kernels::var {
 
 template <class AtomT>
 __device__ AtomT do_task_thread(AtomT a, AtomT b, Add) {
@@ -45,26 +45,26 @@ __global__ void kernel_cmd(TaskT... task_pack) {
 template <class... TaskT>
 __global__ void kernel_cmd_noop(TaskT... task_pack) {}
 
-}  // namespace hsys::kernels
+}  // namespace hsys::kernels::var
 
 namespace hsys {
 
 template <class... TaskT>
   requires(sizeof...(TaskT) > 0)
-void run_pack(TaskT... task) {
+void run_pack_var(TaskT... task) {
   constexpr int block = 128;
   auto max_size = std::max({std::get<0>(task.params()).size()...});
   unsigned const grid = std::ceil(static_cast<float>(max_size) / block);
-  kernels::kernel_cmd<<<grid, block>>>(task...);
+  kernels::var::kernel_cmd<<<grid, block>>>(task...);
 }
 
 template <class... TaskT>
   requires(sizeof...(TaskT) > 0)
-void run_pack_noop(TaskT... task) {
+void run_pack_var_noop(TaskT... task) {
   constexpr int block = 128;
   auto max_size = std::max({std::get<0>(task.params()).size()...});
   unsigned const grid = std::ceil(static_cast<float>(max_size) / block);
-  kernels::kernel_cmd_noop<<<grid, block>>>(task...);
+  kernels::var::kernel_cmd_noop<<<grid, block>>>(task...);
 }
 
 }  // namespace hsys

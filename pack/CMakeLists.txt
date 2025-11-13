@@ -22,4 +22,5 @@ target_include_directories(pack INTERFACE
 
 target_link_libraries(pack INTERFACE
     task
+    core
 )

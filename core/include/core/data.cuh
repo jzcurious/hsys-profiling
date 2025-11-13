@@ -1,10 +1,8 @@
 #pragma once
 
-#include "kinds.cuh"
-
 namespace hsys {
 
-template <AtomK AtomT>
+template <class AtomT>
 struct Data {
   struct hsys_data_feature {};
 

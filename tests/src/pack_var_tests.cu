@@ -1,14 +1,14 @@
 #include <core/vector.cuh>
 #include <fill_rand.cuh>
 #include <gtest/gtest.h>
-#include <pack/kernel_cmd.cuh>
+#include <pack/kernel_cmd_var.cuh>
 #include <task/cmd.cuh>
 #include <task/task.cuh>
 #include <vector>
 
 void* operator new(std::size_t bytes);  // Dumb clangd!
 
-class PackTest : public ::testing::TestWithParam<std::tuple<std::size_t, float>> {
+class PackVarTest : public ::testing::TestWithParam<std::tuple<std::size_t, float>> {
  protected:
   bool pack_test_impl(std::size_t size, float tol) {
     hsys::Vector<float> x1(size);
@@ -23,7 +23,7 @@ class PackTest : public ::testing::TestWithParam<std::tuple<std::size_t, float>>
     fill_rand(x4, 1);
 
     // clang-format off
-    hsys::run_pack(
+    hsys::run_pack_var(
       hsys::Task(hsys::Add{}, y.view(), x1.view(), x2.view()), // +
       hsys::Task(hsys::Mul{}, y.view(),  y.view(), x2.view()), // *
       hsys::Task(hsys::Sub{}, y.view(),  y.view(), x3.view()), // -
@@ -55,7 +55,7 @@ class PackTest : public ::testing::TestWithParam<std::tuple<std::size_t, float>>
   }
 };
 
-TEST_P(PackTest, pack_test) {
+TEST_P(PackVarTest, pack_test) {
   auto [size, tol] = GetParam();
   EXPECT_TRUE(pack_test_impl(size, tol));
 }
@@ -63,7 +63,7 @@ TEST_P(PackTest, pack_test) {
 // clang-format off
 INSTANTIATE_TEST_SUITE_P(
     PackTestSuite,
-    PackTest,
+    PackVarTest,
     ::testing::Combine(
       ::testing::Values(1, 2, 3, 127, 128, 129, 512, 513, 1023, 1024),
       ::testing::Values(1e-5)
