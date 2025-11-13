@@ -1,12 +1,13 @@
 #include <benchmark/benchmark.h>
 #include <core/vector.cuh>
+#include <pack/kernel_cmd_pack.cuh>
 #include <pack/kernel_cmd_var.cuh>
 #include <task/cmd.cuh>
 #include <task/task.cuh>
 
 #include "../include/cuda_timer.cuh"
 
-static void BM_pack(benchmark::State& state) {
+static void BM_pack_var(benchmark::State& state) {
   auto size = state.range(0);
 
   hsys::Vector<float> x1(size);
@@ -22,6 +23,37 @@ static void BM_pack(benchmark::State& state) {
       CUDATimer timer(&elapsed_time);
       // clang-format off
       hsys::run_pack_var(
+        hsys::Task(hsys::Add{}, y.view(), x1.view(), x2.view()), // +
+        hsys::Task(hsys::Mul{}, y.view(),  y.view(), x2.view()), // *
+        hsys::Task(hsys::Sub{}, y.view(),  y.view(), x3.view()), // -
+        hsys::Task(hsys::Div{}, y.view(),  y.view(), x4.view())  // /
+      );
+      // clang-format on
+    }
+
+    benchmark::DoNotOptimize(elapsed_time);
+    benchmark::ClobberMemory();
+
+    state.SetIterationTime(elapsed_time);
+  }
+}
+
+static void BM_pack_pack(benchmark::State& state) {
+  auto size = state.range(0);
+
+  hsys::Vector<float> x1(size);
+  hsys::Vector<float> x2(size);
+  hsys::Vector<float> x3(size);
+  hsys::Vector<float> x4(size);
+  hsys::Vector<float> y(size);
+
+  for (auto _ : state) {
+    float elapsed_time = 0;
+
+    {
+      CUDATimer timer(&elapsed_time);
+      // clang-format off
+      hsys::run_pack_pack(
         hsys::Task(hsys::Add{}, y.view(), x1.view(), x2.view()), // +
         hsys::Task(hsys::Mul{}, y.view(),  y.view(), x2.view()), // *
         hsys::Task(hsys::Sub{}, y.view(),  y.view(), x3.view()), // -
@@ -137,7 +169,14 @@ BENCHMARK(BM_unpack)
     ->Unit(unit)
     ->UseManualTime();
 
-BENCHMARK(BM_pack)
+BENCHMARK(BM_pack_var)
+    ->Name("pack")
+    ->RangeMultiplier(multiplier)
+    ->Ranges({range})
+    ->Unit(unit)
+    ->UseManualTime();
+
+BENCHMARK(BM_pack_pack)
     ->Name("pack")
     ->RangeMultiplier(multiplier)
     ->Ranges({range})
