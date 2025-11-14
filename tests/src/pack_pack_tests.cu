@@ -44,6 +44,7 @@ class PackPackTest : public ::testing::TestWithParam<std::tuple<std::size_t, flo
     y.data().copy_to_host(y_from_device.data());
 
     for (std::size_t i = 0; i < size; ++i) {
+      if (std::isnan(y_from_device[i])) return false;
       float y_i = std_x1[i] + std_x2[i];
       y_i *= std_x2[i];
       y_i -= std_x3[i];
