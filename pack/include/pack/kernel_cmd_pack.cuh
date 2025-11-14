@@ -41,23 +41,9 @@ __device__ void do_task_grid(auto& task) {
 }
 
 struct OverloadSet {
+  template <class T>
   __device__ void operator()(
-      Task<Add, VectorView<float>, VectorView<float>, VectorView<float>>& t) const {
-    do_task_grid(t);
-  }
-
-  __device__ void operator()(
-      Task<Sub, VectorView<float>, VectorView<float>, VectorView<float>>& t) const {
-    do_task_grid(t);
-  }
-
-  __device__ void operator()(
-      Task<Mul, VectorView<float>, VectorView<float>, VectorView<float>>& t) const {
-    do_task_grid(t);
-  }
-
-  __device__ void operator()(
-      Task<Div, VectorView<float>, VectorView<float>, VectorView<float>>& t) const {
+      Task<T, VectorView<float>, VectorView<float>, VectorView<float>>& t) const {
     do_task_grid(t);
   }
 };

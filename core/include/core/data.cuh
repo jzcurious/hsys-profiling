@@ -64,12 +64,28 @@ struct Data {
     return size_;
   }
 
-  void copy_to_host(AtomT* host_ptr) const {
-    cudaMemcpy(host_ptr, data_, size_ * sizeof(AtomT), cudaMemcpyDeviceToHost);
+  void copy_to_host(AtomT* host_ptr, std::size_t size = 0) const {
+    cudaMemcpy(
+        host_ptr, data_, (size ? size : size_) * sizeof(AtomT), cudaMemcpyDeviceToHost);
   }
 
-  void copy_from_host(const AtomT* host_ptr) {
-    cudaMemcpy(data_, host_ptr, size_ * sizeof(AtomT), cudaMemcpyHostToDevice);
+  void copy_from_host(const AtomT* host_ptr, std::size_t size = 0) {
+    cudaMemcpy(
+        data_, host_ptr, (size ? size : size_) * sizeof(AtomT), cudaMemcpyHostToDevice);
+  }
+
+  void copy_to_device(AtomT* device_ptr, std::size_t size = 0) const {
+    cudaMemcpy(device_ptr,
+        data_,
+        (size ? size : size_) * sizeof(AtomT),
+        cudaMemcpyDeviceToDevice);
+  }
+
+  void copy_from_device(AtomT* device_ptr, std::size_t size = 0) const {
+    cudaMemcpy(data_,
+        device_ptr,
+        (size ? size : size_) * sizeof(AtomT),
+        cudaMemcpyDeviceToDevice);
   }
 
   ~Data() {

@@ -1,4 +1,5 @@
 #include <chrono>
+#include <core/data.cuh>
 #include <core/kinds.cuh>
 #include <curand.h>
 
@@ -12,5 +13,13 @@ inline void fill_rand(T& tensor, float mean = 0.0f, float stddev = 1.0f) {
   unsigned long long seed = now.time_since_epoch().count();
 
   curandSetPseudoRandomGeneratorSeed(gen, seed);
-  curandGenerateNormal(gen, tensor.data().data(), tensor.size(), mean, stddev);
+
+  if (tensor.size() % 2) {
+    curandGenerateNormal(gen, tensor.data().data(), tensor.size(), mean, stddev);
+    return;
+  }
+
+  hsys::Data<typename T::atom_t> even_size_data(tensor.size() + 1);
+  curandGenerateNormal(gen, even_size_data.data(), even_size_data.size(), mean, stddev);
+  tensor.data().copy_from_device(even_size_data.data());
 }

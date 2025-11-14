@@ -12,6 +12,7 @@ struct Vector {
   struct hsys_vector_feature {};
 
   using view_t = VectorView<AtomT>;
+  using atom_t = AtomT;
 
  private:
   std::shared_ptr<Data<AtomT>> data_;

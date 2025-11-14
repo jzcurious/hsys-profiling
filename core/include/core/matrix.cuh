@@ -12,6 +12,9 @@ template <AtomK AtomT>
 struct Matrix {
   struct hsys_matrix_feature {};
 
+  using view_t = MatrixView<AtomT>;
+  using atom_t = AtomT;
+
  private:
   std::shared_ptr<Data<AtomT>> data_;
   MatrixView<AtomT> view_;
