@@ -21,8 +21,8 @@ struct DotPipeline {
       : a_(len)
       , b_(len)
       , c_(1) {
-    fill_rand(a_);
-    fill_rand(b_);
+    fill_rand_norm(a_);
+    fill_rand_norm(b_);
   }
 
   template <class ImplT>

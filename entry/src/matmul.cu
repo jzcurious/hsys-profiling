@@ -21,8 +21,8 @@ struct MatmulPipeline {
       : a_(size, size)
       , b_(size, size)
       , c_(size, size) {
-    fill_rand(a_);
-    fill_rand(b_);
+    fill_rand_norm(a_);
+    fill_rand_norm(b_);
   }
 
   template <class ImplT>

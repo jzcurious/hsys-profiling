@@ -5,7 +5,7 @@
 
 template <class T>
   requires(hsys::VectorK<T> or hsys::MatrixK<T>)
-inline void fill_rand(T& tensor, float mean = 0.0f, float stddev = 1.0f) {
+inline void fill_rand_norm(T& tensor, float mean = 0.0f, float stddev = 0.5f) {
   curandGenerator_t gen;  // NOLINT
   curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT);
 
