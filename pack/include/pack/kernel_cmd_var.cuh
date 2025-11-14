@@ -53,8 +53,8 @@ template <class... TaskT>
   requires(sizeof...(TaskT) > 0)
 void run_pack_var(const TaskT&... task) {
   constexpr int block = 128;
-  auto max_size = std::max({std::get<0>(task.params()).size()...});
-  unsigned const grid = std::ceil(static_cast<float>(max_size) / block);
+  float max_size = std::max({std::get<0>(task.params()).size()...});
+  const unsigned grid = std::ceil(max_size / block);
   kernels::var::kernel_cmd<<<grid, block>>>(task...);
 }
 
@@ -62,8 +62,8 @@ template <class... TaskT>
   requires(sizeof...(TaskT) > 0)
 void run_pack_var_noop(const TaskT&... task) {
   constexpr int block = 128;
-  auto max_size = std::max({std::get<0>(task.params()).size()...});
-  unsigned const grid = std::ceil(static_cast<float>(max_size) / block);
+  float max_size = std::max({std::get<0>(task.params()).size()...});
+  const unsigned grid = std::ceil(max_size / block);
   kernels::var::kernel_cmd_noop<<<grid, block>>>(task...);
 }
 
