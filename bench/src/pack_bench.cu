@@ -170,14 +170,14 @@ BENCHMARK(BM_unpack)
     ->UseManualTime();
 
 BENCHMARK(BM_pack_var)
-    ->Name("pack")
+    ->Name("pack (var)")
     ->RangeMultiplier(multiplier)
     ->Ranges({range})
     ->Unit(unit)
     ->UseManualTime();
 
 BENCHMARK(BM_pack_pack)
-    ->Name("pack")
+    ->Name("pack (pack)")
     ->RangeMultiplier(multiplier)
     ->Ranges({range})
     ->Unit(unit)
