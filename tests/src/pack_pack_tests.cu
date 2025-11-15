@@ -20,7 +20,7 @@ class PackPackTest : public ::testing::TestWithParam<std::tuple<std::size_t, flo
     fill_rand_norm(x1, 1);
     fill_rand_norm(x2, 1);
     fill_rand_norm(x3, 1);
-    fill_rand_norm(x4, 4, 0.25);
+    fill_rand_norm(x4, 5, 0.25);
 
     // clang-format off
     hsys::run_pack_pack(
