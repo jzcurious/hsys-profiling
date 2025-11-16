@@ -23,10 +23,10 @@ static void BM_pack_var(benchmark::State& state) {
       CUDATimer timer(&elapsed_time);
       // clang-format off
       hsys::run_pack_var(
-        hsys::Task(hsys::Add{}, y.view(), x1.view(), x2.view()), // +
-        hsys::Task(hsys::Mul{}, y.view(),  y.view(), x2.view()), // *
-        hsys::Task(hsys::Sub{}, y.view(),  y.view(), x3.view()), // -
-        hsys::Task(hsys::Div{}, y.view(),  y.view(), x4.view())  // /
+        hsys::Task(hsys::Add{}, y.view(), x1.view(), x2.view()),
+        hsys::Task(hsys::Mul{}, y.view(),  y.view(), x2.view()),
+        hsys::Task(hsys::Sub{}, y.view(),  y.view(), x3.view()),
+        hsys::Task(hsys::Mul{}, y.view(),  y.view(), x4.view())
       );
       // clang-format on
     }
@@ -54,10 +54,10 @@ static void BM_pack_pack(benchmark::State& state) {
       CUDATimer timer(&elapsed_time);
       // clang-format off
       hsys::run_pack_pack(
-        hsys::Task(hsys::Add{}, y.view(), x1.view(), x2.view()), // +
-        hsys::Task(hsys::Mul{}, y.view(),  y.view(), x2.view()), // *
-        hsys::Task(hsys::Sub{}, y.view(),  y.view(), x3.view()), // -
-        hsys::Task(hsys::Div{}, y.view(),  y.view(), x4.view())  // /
+        hsys::Task(hsys::Add{}, y.view(), x1.view(), x2.view()),
+        hsys::Task(hsys::Mul{}, y.view(),  y.view(), x2.view()),
+        hsys::Task(hsys::Sub{}, y.view(),  y.view(), x3.view()),
+        hsys::Task(hsys::Mul{}, y.view(),  y.view(), x4.view())
       );
       // clang-format on
     }
@@ -85,10 +85,10 @@ static void BM_pack_noop(benchmark::State& state) {
       CUDATimer timer(&elapsed_time);
       // clang-format off
       hsys::run_pack_var_noop(
-        hsys::Task(hsys::Add{}, y.view(), x1.view(), x2.view()), // +
-        hsys::Task(hsys::Mul{}, y.view(),  y.view(), x2.view()), // *
-        hsys::Task(hsys::Sub{}, y.view(),  y.view(), x3.view()), // -
-        hsys::Task(hsys::Div{}, y.view(),  y.view(), x4.view())  // /
+        hsys::Task(hsys::Add{}, y.view(), x1.view(), x2.view()),
+        hsys::Task(hsys::Mul{}, y.view(),  y.view(), x2.view()),
+        hsys::Task(hsys::Sub{}, y.view(),  y.view(), x3.view()),
+        hsys::Task(hsys::Mul{}, y.view(),  y.view(), x4.view())
       );
       // clang-format on
     }
@@ -115,10 +115,10 @@ static void BM_unpack(benchmark::State& state) {
     {
       CUDATimer timer(&elapsed_time);
       // clang-format off
-      hsys::run_pack_var(hsys::Task(hsys::Add{}, y.view(), x1.view(), x2.view()));  // +
-      hsys::run_pack_var(hsys::Task(hsys::Mul{}, y.view(),  y.view(), x2.view()));  // *
-      hsys::run_pack_var(hsys::Task(hsys::Sub{}, y.view(),  y.view(), x3.view()));  // -
-      hsys::run_pack_var(hsys::Task(hsys::Div{}, y.view(),  y.view(), x4.view()));  // /
+      hsys::run_pack_var(hsys::Task(hsys::Add{}, y.view(), x1.view(), x2.view()));
+      hsys::run_pack_var(hsys::Task(hsys::Mul{}, y.view(),  y.view(), x2.view()));
+      hsys::run_pack_var(hsys::Task(hsys::Sub{}, y.view(),  y.view(), x3.view()));
+      hsys::run_pack_var(hsys::Task(hsys::Mul{}, y.view(),  y.view(), x4.view()));
       // clang-format on
     }
 
@@ -144,10 +144,10 @@ static void BM_unpack_noop(benchmark::State& state) {
     {
       CUDATimer timer(&elapsed_time);
       // clang-format off
-      hsys::run_pack_var_noop(hsys::Task(hsys::Add{}, y.view(), x1.view(), x2.view()));  // +
-      hsys::run_pack_var_noop(hsys::Task(hsys::Mul{}, y.view(),  y.view(), x2.view()));  // *
-      hsys::run_pack_var_noop(hsys::Task(hsys::Sub{}, y.view(),  y.view(), x3.view()));  // -
-      hsys::run_pack_var_noop(hsys::Task(hsys::Div{}, y.view(),  y.view(), x4.view()));  // /
+      hsys::run_pack_var_noop(hsys::Task(hsys::Add{}, y.view(), x1.view(), x2.view()));
+      hsys::run_pack_var_noop(hsys::Task(hsys::Mul{}, y.view(),  y.view(), x2.view()));
+      hsys::run_pack_var_noop(hsys::Task(hsys::Sub{}, y.view(),  y.view(), x3.view()));
+      hsys::run_pack_var_noop(hsys::Task(hsys::Mul{}, y.view(),  y.view(), x4.view()));
       // clang-format on
     }
 

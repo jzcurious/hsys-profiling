@@ -1,12 +1,6 @@
 #pragma once
 
-class CUDATimer {
- private:
-  float* elapse_time_s_;
-  cudaEvent_t start_ = nullptr;
-  cudaEvent_t stop_ = nullptr;
-
- public:
+struct CUDATimer {
   CUDATimer(float* elapse_time_s)
       : elapse_time_s_(elapse_time_s) {
     cudaEventCreate(&start_);
@@ -28,4 +22,9 @@ class CUDATimer {
     cudaEventDestroy(start_);
     cudaEventDestroy(stop_);
   }
+
+ private:
+  float* elapse_time_s_;
+  cudaEvent_t start_ = nullptr;
+  cudaEvent_t stop_ = nullptr;
 };

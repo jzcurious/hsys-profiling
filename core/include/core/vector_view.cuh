@@ -16,6 +16,10 @@ struct VectorView {
   std::size_t size_;
 
  public:
+  __host__ __device__ VectorView()
+      : data_(nullptr)
+      , size_(0) {}
+
   __host__ __device__ VectorView(atom_t* data, std::size_t size)
       : data_(data)
       , size_(size) {}
