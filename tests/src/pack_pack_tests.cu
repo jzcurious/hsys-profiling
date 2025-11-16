@@ -17,9 +17,9 @@ class PackPackTest : public ::testing::TestWithParam<std::tuple<std::size_t, flo
     hsys::Vector<float> x4(size);
     hsys::Vector<float> y(size);
 
-    fill_rand_norm(x1, 1);
-    fill_rand_norm(x2, 1);
-    fill_rand_norm(x3, 1);
+    fill_rand_norm(x1, 5);
+    fill_rand_norm(x2, 5);
+    fill_rand_norm(x3, 5);
     fill_rand_norm(x4, 5, 0.25);
 
     // clang-format off

@@ -1,9 +1,9 @@
 #pragma once
 
 #include <array>
+#include <cuda/std/variant>
 #include <task/task.cuh>
 #include <tuple>
-#include <variant>
 
 namespace hsys::internal {
 
@@ -39,7 +39,7 @@ struct tuple_to_variant;
 
 template <class... Ts>
 struct tuple_to_variant<std::tuple<Ts...>> {
-  using type = std::variant<Ts...>;
+  using type = cuda::std::variant<Ts...>;
 };
 
 template <class... Ts>

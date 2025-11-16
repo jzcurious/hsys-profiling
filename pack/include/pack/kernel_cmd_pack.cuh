@@ -5,9 +5,9 @@
 #include <algorithm>
 #include <cmath>
 #include <core/vector_view.cuh>
+#include <cuda/std/variant>
 #include <task/cmd.cuh>
 #include <task/task.cuh>
-#include <variant>
 
 namespace hsys::kernels::pack {
 
@@ -50,7 +50,7 @@ struct OverloadSet {
 
 __global__ void kernel_cmd(PackKind auto task_pack) {
   constexpr auto overloaded = OverloadSet{};
-  for (auto& t : task_pack.tasks()) std::visit(overloaded, t);
+  for (auto& t : task_pack.tasks()) cuda::std::visit(overloaded, t);
 }
 
 }  // namespace hsys::kernels::pack
