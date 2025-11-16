@@ -37,11 +37,11 @@ class PackVarTest : public ::testing::TestWithParam<std::tuple<std::size_t, floa
     std::vector<float> std_x4(size);
     std::vector<float> y_from_device(size);
 
-    x1.data().copy_to_host(std_x1.data());
-    x2.data().copy_to_host(std_x2.data());
-    x3.data().copy_to_host(std_x3.data());
-    x4.data().copy_to_host(std_x4.data());
-    y.data().copy_to_host(y_from_device.data());
+    x1.data().copy_to(std_x1.data());
+    x2.data().copy_to(std_x2.data());
+    x3.data().copy_to(std_x3.data());
+    x4.data().copy_to(std_x4.data());
+    y.data().copy_to(y_from_device.data());
 
     for (std::size_t i = 0; i < size; ++i) {
       if (std::isnan(y_from_device[i])) return false;

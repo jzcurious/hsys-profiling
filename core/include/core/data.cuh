@@ -64,29 +64,37 @@ struct Data {
     return size_;
   }
 
-  void copy_to_host(AtomT* host_ptr, std::size_t size = 0) const {
+  // clang-format off
+
+  void copy_to(
+      AtomT* ptr,
+      std::size_t dst_to = 0,
+      std::size_t src_from = 0,
+      std::size_t size = 0) const
+ {
     cudaMemcpy(
-        host_ptr, data_, (size ? size : size_) * sizeof(AtomT), cudaMemcpyDeviceToHost);
+      ptr + dst_to,
+      data_ + src_from,
+      (size ? size : size_) * sizeof(AtomT),
+      cudaMemcpyDefault
+    );
   }
 
-  void copy_from_host(const AtomT* host_ptr, std::size_t size = 0) {
+  void copy_from(
+      AtomT* ptr,
+      std::size_t dst_to = 0,
+      std::size_t src_from = 0,
+      std::size_t size = 0) const
+ {
     cudaMemcpy(
-        data_, host_ptr, (size ? size : size_) * sizeof(AtomT), cudaMemcpyHostToDevice);
+      data_ + src_from,
+      ptr + dst_to,
+      (size ? size : size_) * sizeof(AtomT),
+      cudaMemcpyDefault
+    );
   }
 
-  void copy_to_device(AtomT* device_ptr, std::size_t size = 0) const {
-    cudaMemcpy(device_ptr,
-        data_,
-        (size ? size : size_) * sizeof(AtomT),
-        cudaMemcpyDeviceToDevice);
-  }
-
-  void copy_from_device(AtomT* device_ptr, std::size_t size = 0) const {
-    cudaMemcpy(data_,
-        device_ptr,
-        (size ? size : size_) * sizeof(AtomT),
-        cudaMemcpyDeviceToDevice);
-  }
+  // clang-format on
 
   ~Data() {
     if (data_) cudaFree(data_);

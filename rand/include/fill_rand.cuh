@@ -17,7 +17,7 @@ inline void fill_rand_norm(T& tensor, float mean = 0.0f, float stddev = 0.5f) {
   if (tensor.size() % 2) {
     hsys::Data<typename T::atom_t> even_size_data(tensor.size() + 1);
     curandGenerateNormal(gen, even_size_data.data(), even_size_data.size(), mean, stddev);
-    tensor.data().copy_from_device(even_size_data.data());
+    tensor.data().copy_from(even_size_data.data());
     curandDestroyGenerator(gen);
     return;
   }

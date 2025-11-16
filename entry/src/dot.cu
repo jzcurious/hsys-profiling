@@ -29,7 +29,7 @@ struct DotPipeline {
   void run(ImplT impl) {
     float result = 0;
     impl(c_, a_, b_);
-    c_.data().copy_to_host(&result);
+    c_.data().copy_to(&result);
     std::cout << result << std::endl;
   }
 };
