@@ -61,8 +61,10 @@ void run_pack_dynpack(const DynPackKind auto& task_pack) {
   constexpr int block = 128;
   float max_size = 0;
   for (unsigned i = 0; i < task_pack.size(); ++i) {
-    auto s = std::get<0>(task_pack[i].params()).size();
-    if (max_size < s) max_size = s;
+    unsigned s = 0;
+    cuda::std::visit(
+        [&s](auto&& t) { s = std::get<0>(t.params()).size(); }, task_pack[i]);
+    if (max_size < s) max_size = s;  // NOLINT
   }
   const unsigned grid = std::ceil(max_size / block);
   kernels::pack::kernel_cmd<<<grid, block>>>(task_pack);

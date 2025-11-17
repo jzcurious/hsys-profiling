@@ -35,7 +35,7 @@ class PackDynpackTest : public ::testing::TestWithParam<std::tuple<std::size_t, 
     dpack.push(hsys::Task(hsys::Add{}, y.view(), y.view(), x2.view()));
     dpack.push(hsys::Task(hsys::Mul{}, y.view(), y.view(), x3.view()));
 
-    // hsys::run_pack_dynpack(dpack);
+    hsys::run_pack_dynpack(dpack);
 
     std::vector<float> std_x1(size);
     std::vector<float> std_x2(size);
