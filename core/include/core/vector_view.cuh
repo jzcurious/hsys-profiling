@@ -27,8 +27,8 @@ struct VectorView {
   VectorView(const VectorView& other) = default;
   VectorView(VectorView&& other) = default;
 
-  VectorView& operator=(const VectorView& other) = delete;
-  VectorView& operator=(VectorView&& other) = delete;
+  VectorView& operator=(const VectorView& other) = default;
+  VectorView& operator=(VectorView&& other) = default;
 
   ~VectorView() = default;
 

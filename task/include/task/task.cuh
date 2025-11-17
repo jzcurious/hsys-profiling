@@ -20,6 +20,14 @@ struct Task {
   Task(T, const U&... params)
       : params_{params...} {}
 
+  Task(const Task&) = default;
+  Task(Task&&) = default;
+
+  Task& operator=(const Task&) = default;
+  Task& operator=(Task&&) = default;
+
+  ~Task() = default;
+
   __host__ __device__ std::tuple<ParameterT...>& params() {
     return params_;
   }

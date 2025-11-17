@@ -18,7 +18,7 @@ namespace hsys {
 template <VectorK VectorT = hsys::Vector<float>>
 void dot_atomic(VectorT& c, const VectorT& a, const VectorT& b) {
   constexpr unsigned block = 128;
-  const unsigned grid = std::ceil(a.size() / block);
+  const unsigned grid = std::ceil(static_cast<float>(a.size()) / block);
   hsys::kernels::dot_atomic<<<grid, block>>>(c.view(), a.view(), b.view());
 }
 

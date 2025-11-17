@@ -60,7 +60,7 @@ template <unsigned tile_size = 16,
 void matmul_extend_symn(MatrixT& c, const MatrixT& a, const MatrixT& b) {
   constexpr auto block = dim3(tile_size, tile_size);
   const auto grid = dim3(std::ceil(c.ncols() / (block.x * extend_coef)),
-      std::ceil(c.nrows() / (block.y * extend_coef)));
+      std::ceil(static_cast<float>(c.nrows()) / (block.y * extend_coef)));
   hsys::kernels::matmul_extend_symn<tile_size, extend_coef>
       <<<grid, block>>>(c.view(), a.view(), b.view());
 }

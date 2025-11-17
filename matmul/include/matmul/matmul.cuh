@@ -47,7 +47,8 @@ namespace hsys {
 template <MatrixK MatrixT = Matrix<float>>
 void matmul(MatrixT& c, const MatrixT& a, const MatrixT& b) {
   constexpr auto block = dim3(16, 16);
-  const auto grid = dim3(std::ceil(c.ncols() / block.x), std::ceil(c.nrows() / block.y));
+  const auto grid = dim3(
+      std::ceil(c.ncols() / block.x), std::ceil(static_cast<float>(c.nrows()) / block.y));
   hsys::kernels::matmul<16><<<grid, block>>>(c.view(), a.view(), b.view());
 }
 

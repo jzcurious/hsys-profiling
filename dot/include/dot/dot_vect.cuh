@@ -37,7 +37,7 @@ namespace hsys {
 template <unsigned portion, VectorK VectorT = hsys::Vector<float>>
 void dot_vect(VectorT& c, const VectorT& a, const VectorT& b) {
   constexpr unsigned block = 32;
-  const unsigned grid = std::ceil(a.size() / (block * portion));
+  const unsigned grid = std::ceil(static_cast<float>(a.size()) / (block * portion));
   hsys::kernels::dot_vect<portion><<<grid, block>>>(c.view(), a.view(), b.view());
 }
 

@@ -60,7 +60,7 @@ namespace hsys {
 
 template <unsigned block, VectorK VectorT = hsys::Vector<float>>
 void dot_nlog(VectorT& c, const VectorT& a, const VectorT& b) {
-  const unsigned grid = std::ceil(a.size() / (4 * block));
+  const unsigned grid = std::ceil(static_cast<float>(a.size()) / (4 * block));
   hsys::kernels::dot_nlog<block><<<grid, block>>>(c.view(), a.view(), b.view());
 }
 

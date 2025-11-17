@@ -89,8 +89,8 @@ namespace hsys {
 template <MatrixK MatrixT = Matrix<float>>
 void matmul_extend_sym3(MatrixT& c, const MatrixT& a, const MatrixT& b) {
   constexpr auto block = dim3(16, 16);
-  const auto grid
-      = dim3(std::ceil(c.ncols() / (block.x * 2)), std::ceil(c.nrows() / (block.y * 2)));
+  const auto grid = dim3(std::ceil(c.ncols() / (block.x * 2)),
+      std::ceil(static_cast<float>(c.nrows()) / (block.y * 2)));
   hsys::kernels::matmul_extend_sym3<16><<<grid, block>>>(c.view(), a.view(), b.view());
 }
 
