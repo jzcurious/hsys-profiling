@@ -1,5 +1,6 @@
 #include <benchmark/benchmark.h>
 #include <core/vector.cuh>
+#include <pack/kernel_cmd_dynpack.cuh>
 #include <pack/kernel_cmd_pack.cuh>
 #include <pack/kernel_cmd_var.cuh>
 #include <task/cmd.cuh>
@@ -60,6 +61,38 @@ static void BM_pack_pack(benchmark::State& state) {
         hsys::Task(hsys::Mul{}, y.view(),  y.view(), x4.view())
       );
       // clang-format on
+    }
+
+    benchmark::DoNotOptimize(elapsed_time);
+    benchmark::ClobberMemory();
+
+    state.SetIterationTime(elapsed_time);
+  }
+}
+
+static void BM_pack_dynpack(benchmark::State& state) {
+  auto size = state.range(0);
+
+  hsys::Vector<float> x1(size);
+  hsys::Vector<float> x2(size);
+  hsys::Vector<float> x3(size);
+  hsys::Vector<float> x4(size);
+  hsys::Vector<float> y(size);
+
+  for (auto _ : state) {
+    float elapsed_time = 0;
+
+    {
+      CUDATimer timer(&elapsed_time);
+      // clang-format off
+      auto dpack = hsys::DynPack(
+        hsys::Task(hsys::Add{}, y.view(), x1.view(), x2.view()),
+        hsys::Task(hsys::Mul{}, y.view(),  y.view(), x2.view()),
+        hsys::Task(hsys::Sub{}, y.view(),  y.view(), x3.view()),
+        hsys::Task(hsys::Mul{}, y.view(),  y.view(), x4.view())
+      );
+      // clang-format on
+      hsys::run_pack_dynpack(dpack);
     }
 
     benchmark::DoNotOptimize(elapsed_time);
@@ -178,6 +211,13 @@ BENCHMARK(BM_pack_var)
 
 BENCHMARK(BM_pack_pack)
     ->Name("pack (pack)")
+    ->RangeMultiplier(multiplier)
+    ->Ranges({range})
+    ->Unit(unit)
+    ->UseManualTime();
+
+BENCHMARK(BM_pack_dynpack)
+    ->Name("pack (dyn)")
     ->RangeMultiplier(multiplier)
     ->Ranges({range})
     ->Unit(unit)

@@ -8,7 +8,7 @@
 #include <task/cmd.cuh>
 #include <task/task.cuh>
 
-namespace hsys::kernels::pack {
+namespace hsys::kernels::dynpack {
 
 template <class AtomT>
 __device__ AtomT do_task_thread(AtomT a, AtomT b, Add) {
@@ -53,7 +53,7 @@ __global__ void kernel_cmd(DynPackKind auto task_pack) {
     cuda::std::visit(overloaded, task_pack[i]);
 }
 
-}  // namespace hsys::kernels::pack
+}  // namespace hsys::kernels::dynpack
 
 namespace hsys {
 
@@ -67,7 +67,7 @@ void run_pack_dynpack(const DynPackKind auto& task_pack) {
     if (max_size < s) max_size = s;  // NOLINT
   }
   const unsigned grid = std::ceil(max_size / block);
-  kernels::pack::kernel_cmd<<<grid, block>>>(task_pack);
+  kernels::dynpack::kernel_cmd<<<grid, block>>>(task_pack);
 }
 
 }  // namespace hsys
