@@ -34,6 +34,7 @@ class PackBufferTest : public ::testing::TestWithParam<std::tuple<std::size_t, f
     );
     // clang-format on
 
+    tbuffer.flush();
     tbuffer.push(hsys::Task(hsys::Add{}, y.view(), y.view(), x2.view()));
 
     std::vector<float> std_x1(size);

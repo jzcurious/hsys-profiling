@@ -5,7 +5,7 @@
 namespace hsys {
 
 template <DynPackKind DynPackT, class CallbackT>
-// requires std::is_invocable_v<CallbackT, DynPackT>
+  requires std::is_invocable_v<CallbackT, DynPackT>
 struct TaskBuffer {
   using common_task_t = typename DynPackT::common_task_t;
 
