@@ -1,9 +1,10 @@
 #pragma once
 
+#include "cmd.cuh"
+
 #include <algorithm>
 #include <cmath>
 #include <core/vector_view.cuh>
-#include <task/cmd.cuh>
 
 namespace hsys::kernels::var {
 

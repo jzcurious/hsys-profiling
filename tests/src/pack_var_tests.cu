@@ -1,9 +1,9 @@
 #include <core/vector.cuh>
 #include <fill_rand.cuh>
 #include <gtest/gtest.h>
+#include <pack/cmd.cuh>
 #include <pack/kernel_cmd_var.cuh>
-#include <task/cmd.cuh>
-#include <task/task.cuh>
+#include <pack/task.cuh>
 #include <vector>
 
 void* operator new(std::size_t bytes);  // Dumb clangd!

@@ -1,13 +1,12 @@
 #pragma once
 
+#include "cmd.cuh"
 #include "pack.cuh"
 
 #include <algorithm>
 #include <cmath>
 #include <core/vector_view.cuh>
 #include <cuda/std/variant>
-#include <task/cmd.cuh>
-#include <task/task.cuh>
 
 namespace hsys::kernels::pack {
 

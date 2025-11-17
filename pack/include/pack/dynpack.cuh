@@ -1,9 +1,8 @@
 #pragma once
 
 #include "pack.cuh"
+#include "task.cuh"
 #include "uvariant.cuh"
-
-#include <task/task.cuh>
 
 namespace hsys {
 

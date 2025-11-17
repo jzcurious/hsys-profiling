@@ -1,6 +1,6 @@
 #pragma once
 
-#include <pack/dynpack.cuh>
+#include "dynpack.cuh"
 
 namespace hsys {
 

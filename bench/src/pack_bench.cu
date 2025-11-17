@@ -1,10 +1,10 @@
 #include <benchmark/benchmark.h>
 #include <core/vector.cuh>
+#include <pack/cmd.cuh>
 #include <pack/kernel_cmd_dynpack.cuh>
 #include <pack/kernel_cmd_pack.cuh>
 #include <pack/kernel_cmd_var.cuh>
-#include <task/cmd.cuh>
-#include <task/task.cuh>
+#include <pack/task.cuh>
 
 #include "../include/cuda_timer.cuh"
 

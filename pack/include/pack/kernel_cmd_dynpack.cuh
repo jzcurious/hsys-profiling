@@ -1,12 +1,11 @@
 #pragma once
 
+#include "cmd.cuh"
 #include "dynpack.cuh"
 
 #include <cmath>
 #include <core/vector_view.cuh>
 #include <cuda/std/variant>
-#include <task/cmd.cuh>
-#include <task/task.cuh>
 
 namespace hsys::kernels::dynpack {
 

@@ -1,9 +1,9 @@
 #pragma once
 
+#include "task.cuh"
 #include "uvariant.cuh"
 
 #include <array>
-#include <task/task.cuh>
 
 namespace hsys {
 
