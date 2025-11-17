@@ -36,7 +36,7 @@ struct DynPack {
 
   __host__ void push(const TaskVarT& task) {
     if (is_full()) return;
-    pack_[++size_] = task;
+    pack_[size_++] = task;
   }
 
   __host__ __device__ TaskVarT& operator[](std::size_t i) {
